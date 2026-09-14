@@ -17,7 +17,7 @@ export default function CatalogoPage() {
     const [busqueda, setBusqueda] = useState('')
     const [errorMensaje, setErrorMensaje] = useState<string | null>(null)
 
-    const NUMERO_WHATSAPP = '593900000000'
+    const NUMERO_WHATSAPP = '593997088375'
 
     useEffect(() => {
         const obtenerProductos = async () => {
