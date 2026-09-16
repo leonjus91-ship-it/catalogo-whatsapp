@@ -1,3 +1,4 @@
+// Última actualización para forzar build
 'use client'
 
 import { useEffect, useState } from 'react'
@@ -40,8 +41,9 @@ export default function Home() {
         const coincideTexto = producto.nombre.toLowerCase().includes(busqueda.toLowerCase()) ||
             producto.descripcion.toLowerCase().includes(busqueda.toLowerCase())
 
+        const categoriaProducto = producto.categoria?.toLowerCase() || ''
         const coincideCategoria = categoriaSeleccionada === 'todos' ||
-            producto.categoria?.toLowerCase() === categoriaSeleccionada.toLowerCase()
+            categoriaProducto.includes(categoriaSeleccionada.toLowerCase())
 
         return coincideTexto && coincideCategoria
     })
