@@ -1,4 +1,3 @@
-// Última actualización para forzar build
 'use client'
 
 import { useEffect, useState } from 'react'
@@ -84,13 +83,13 @@ export default function Home() {
                         Todos
                     </button>
                     <button
-                        onClick={() => setCategoriaSeleccionada('camisas')}
-                        className={`px-5 py-2 rounded-full font-medium transition-all ${categoriaSeleccionada === 'camisas'
+                        onClick={() => setCategoriaSeleccionada('camisetas')}
+                        className={`px-5 py-2 rounded-full font-medium transition-all ${categoriaSeleccionada === 'camisetas'
                                 ? 'bg-black text-white shadow-md'
                                 : 'bg-white text-gray-700 border border-gray-300 hover:bg-gray-100'
                             }`}
                     >
-                        Camisas
+                        Camisetas
                     </button>
                     <button
                         onClick={() => setCategoriaSeleccionada('gorras')}
