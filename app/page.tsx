@@ -1,7 +1,11 @@
 'use client'
 
-import { useState, useEffect } from 'react'
-import { supabase } from '../lib/supabase'
+import { useEffect, useState } from 'react'
+import { createClient } from '@supabase/supabase-js'
+
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || ''
+const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || ''
+const supabase = createClient(supabaseUrl, supabaseAnonKey)
 
 interface Producto {
     id: number
@@ -9,114 +13,132 @@ interface Producto {
     descripcion: string
     precio: number
     imagen_url: string
+    categoria?: string
 }
 
-export default function CatalogoPage() {
+export default function Home() {
     const [productos, setProductos] = useState<Producto[]>([])
-    const [loading, setLoading] = useState(true)
     const [busqueda, setBusqueda] = useState('')
-    const [errorMensaje, setErrorMensaje] = useState<string | null>(null)
-
-    const NUMERO_WHATSAPP = '593997088375'
+    const [categoriaSeleccionada, setCategoriaSeleccionada] = useState('todos')
+    const [cargando, setCargando] = useState(true)
 
     useEffect(() => {
-        const obtenerProductos = async () => {
-            try {
-                setLoading(true)
-                setErrorMensaje(null)
-
-                const { data, error } = await supabase
-                    .from('productos')
-                    .select('*')
-                    .order('id', { ascending: false })
-
-                if (error) {
-                    setErrorMensaje(error.message)
-                } else if (data) {
-                    setProductos(data)
-                }
-            } catch (err: any) {
-                setErrorMensaje('Error de conexión')
-            } finally {
-                setLoading(false)
+        async function obtenerProductos() {
+            const { data, error } = await supabase.from('productos').select('*')
+            if (error) {
+                console.error('Error al cargar productos:', error)
+            } else {
+                setProductos(data || [])
             }
+            setCargando(false)
         }
 
         obtenerProductos()
     }, [])
 
     const productosFiltrados = productos.filter((producto) => {
-        const termino = busqueda.toLowerCase()
-        return (
-            producto.nombre?.toLowerCase().includes(termino) ||
-            producto.descripcion?.toLowerCase().includes(termino)
-        )
+        const coincideTexto = producto.nombre.toLowerCase().includes(busqueda.toLowerCase()) ||
+            producto.descripcion.toLowerCase().includes(busqueda.toLowerCase())
+
+        const coincideCategoria = categoriaSeleccionada === 'todos' ||
+            producto.categoria?.toLowerCase() === categoriaSeleccionada.toLowerCase()
+
+        return coincideTexto && coincideCategoria
     })
 
-    const generarEnlaceWhatsApp = (producto: Producto) => {
-        const mensaje = `¡Hola! Me interesa comprar este producto:\n\n📌 *${producto.nombre}*\n💰 Precio: $${Number(producto.precio).toFixed(2)}`
-        return `https://wa.me/${NUMERO_WHATSAPP}?text=${encodeURIComponent(mensaje)}`
-    }
-
     return (
-        <div className="min-h-screen bg-gray-100 p-4 pb-12">
-            <header className="max-w-md mx-auto text-center mb-6 pt-4">
-                <h1 className="text-2xl font-bold text-gray-800">Catálogo de Productos</h1>
-                <p className="text-xs text-gray-500 mt-1">Pedidos directos por WhatsApp</p>
-            </header>
+        <main className="min-h-screen bg-gray-50 py-8 px-4 sm:px-6 lg:px-8">
+            <div className="max-w-7xl mx-auto">
+                {/* Título de la Tienda */}
+                <div className="text-center mb-8">
+                    <h1 className="text-4xl font-extrabold text-gray-900 tracking-tight">
+                        Catálogo de Productos
+                    </h1>
+                    <p className="mt-2 text-lg text-gray-600">
+                        Pedidos directos por WhatsApp
+                    </p>
+                </div>
 
-            <main className="max-w-md mx-auto space-y-4">
-                <input
-                    type="text"
-                    placeholder="Buscar producto..."
-                    value={busqueda}
-                    onChange={(e) => setBusqueda(e.target.value)}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg text-sm bg-white text-black outline-none focus:ring-2 focus:ring-emerald-500"
-                />
+                {/* Barra de Búsqueda */}
+                <div className="max-w-md mx-auto mb-4">
+                    <input
+                        type="text"
+                        placeholder="Buscar producto..."
+                        value={busqueda}
+                        onChange={(e) => setBusqueda(e.target.value)}
+                        className="w-full px-4 py-3 rounded-xl border border-gray-300 shadow-sm focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent text-gray-900"
+                    />
+                </div>
 
-                {loading && (
-                    <div className="text-center py-8 text-gray-500 text-sm">
-                        Cargando catálogo...
-                    </div>
+                {/* Botones de Filtro por Categoría */}
+                <div className="flex justify-center gap-3 mb-8">
+                    <button
+                        onClick={() => setCategoriaSeleccionada('todos')}
+                        className={`px-5 py-2 rounded-full font-medium transition-all ${categoriaSeleccionada === 'todos'
+                                ? 'bg-black text-white shadow-md'
+                                : 'bg-white text-gray-700 border border-gray-300 hover:bg-gray-100'
+                            }`}
+                    >
+                        Todos
+                    </button>
+                    <button
+                        onClick={() => setCategoriaSeleccionada('camisas')}
+                        className={`px-5 py-2 rounded-full font-medium transition-all ${categoriaSeleccionada === 'camisas'
+                                ? 'bg-black text-white shadow-md'
+                                : 'bg-white text-gray-700 border border-gray-300 hover:bg-gray-100'
+                            }`}
+                    >
+                        Camisas
+                    </button>
+                    <button
+                        onClick={() => setCategoriaSeleccionada('gorras')}
+                        className={`px-5 py-2 rounded-full font-medium transition-all ${categoriaSeleccionada === 'gorras'
+                                ? 'bg-black text-white shadow-md'
+                                : 'bg-white text-gray-700 border border-gray-300 hover:bg-gray-100'
+                            }`}
+                    >
+                        Gorras
+                    </button>
+                </div>
+
+                {/* Mensaje de carga */}
+                {cargando && (
+                    <div className="text-center py-12 text-gray-500">Cargando productos...</div>
                 )}
 
-                {errorMensaje && !loading && (
-                    <div className="p-3 bg-red-100 text-red-700 text-xs rounded-lg text-center">
-                        {errorMensaje}
-                    </div>
-                )}
-
-                {!loading && !errorMensaje && (
-                    <div className="grid grid-cols-1 gap-4">
+                {/* Cuadrícula de Productos */}
+                {!cargando && (
+                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
                         {productosFiltrados.map((producto) => (
-                            <div key={producto.id} className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
-                                {/* Visualizador de Imagen */}
-                                <div className="w-full h-56 bg-gray-50 flex items-center justify-center overflow-hidden">
-                                    {producto.imagen_url ? (
-                                        <img
-                                            src={producto.imagen_url}
-                                            alt={producto.nombre}
-                                            className="w-full h-full object-cover"
-                                        />
-                                    ) : (
-                                        <span className="text-gray-400 text-xs">Sin imagen</span>
-                                    )}
+                            <div
+                                key={producto.id}
+                                className="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden flex flex-col hover:shadow-md transition-shadow"
+                            >
+                                <div className="w-full h-48 bg-gray-100 relative overflow-hidden">
+                                    <img
+                                        src={producto.imagen_url}
+                                        alt={producto.nombre}
+                                        className="w-full h-full object-cover"
+                                    />
                                 </div>
-
-                                {/* Detalle del producto */}
-                                <div className="p-4">
-                                    <h3 className="font-bold text-gray-900 text-base">{producto.nombre}</h3>
-                                    <p className="text-xs text-gray-500 mt-1">{producto.descripcion}</p>
-
-                                    <div className="mt-4 flex items-center justify-between border-t pt-3">
-                                        <span className="text-lg font-black text-gray-900">
-                                            ${Number(producto.precio).toFixed(2)}
-                                        </span>
+                                <div className="p-5 flex-1 flex flex-col justify-between">
+                                    <div>
+                                        <h3 className="text-lg font-semibold text-gray-900 mb-1">
+                                            {producto.nombre}
+                                        </h3>
+                                        <p className="text-gray-600 text-sm mb-4 line-clamp-2">
+                                            {producto.descripcion}
+                                        </p>
+                                    </div>
+                                    <div>
+                                        <div className="text-xl font-bold text-gray-900 mb-4">
+                                            ${producto.precio}
+                                        </div>
                                         <a
-                                            href={generarEnlaceWhatsApp(producto)}
+                                            href={`https://wa.me/?text=${encodeURIComponent(`Hola, quiero comprar este modelo: ${producto.nombre}.\nAquí puedes ver la foto: ${producto.imagen_url}`)}`}
                                             target="_blank"
                                             rel="noopener noreferrer"
-                                            className="bg-emerald-600 active:bg-emerald-700 text-white px-4 py-2 rounded-lg text-xs font-bold transition shadow-sm"
+                                            className="w-full block text-center bg-green-600 hover:bg-green-700 text-white font-medium py-2.5 px-4 rounded-xl transition-colors shadow-sm"
                                         >
                                             Pedir por WhatsApp
                                         </a>
@@ -126,7 +148,14 @@ export default function CatalogoPage() {
                         ))}
                     </div>
                 )}
-            </main>
-        </div>
+
+                {/* Si no hay resultados */}
+                {!cargando && productosFiltrados.length === 0 && (
+                    <div className="text-center py-12 text-gray-500">
+                        No se encontraron productos con esos filtros.
+                    </div>
+                )}
+            </div>
+        </main>
     )
 }
