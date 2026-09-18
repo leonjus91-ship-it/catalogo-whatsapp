@@ -76,17 +76,15 @@ export default function Home() {
     })
 
     return (
-        // --- AQUI ESTA EL CAMBIO PRINCIPAL ---
-        // Usamos la imagen de ladrillos como fondo, la centramos y cubrimos toda la pantalla.
-        // La capa oscura 'bg-black/70' encima ayuda a que el texto blanco se lea bien.
-        <main className= "min-h-screen py-8 px-4 sm:px-6 lg:px-8 pb-32 bg-[url('https://images.unsplash.com/photo-1559571857-d97e4838d1b2?q=80&w=1280&auto=format&fit=crop')] bg-cover bg-center bg-fixed bg-blend-overlay bg-black/70" >
+        // Fondo oscuro texturizado con patrón de cuadrícula sutil en tonos neón/azulados
+        <main className= "min-h-screen py-8 px-4 sm:px-6 lg:px-8 pb-32 bg-slate-950 bg-[radial-gradient(#1e293b_1px,transparent_1px)] [background-size:24px_24px]" >
         <div className="max-w-7xl mx-auto" >
-        {/* Título de la Tienda - Ajustado a color blanco por el fondo oscuro */ }
+        {/* Título de la Tienda */ }
             < div className = "text-center mb-8" >
                 <h1 className="text-4xl font-extrabold text-white tracking-tight" >
                     Catálogo de Productos
                         </h1>
-                        < p className = "mt-2 text-lg text-gray-300" >
+                        < p className = "mt-2 text-lg text-gray-400" >
                             Selecciona tus productos y pídelos juntos por WhatsApp
                                 </p>
                                 </div>
@@ -99,17 +97,17 @@ export default function Home() {
     value = { busqueda }
     onChange = {(e) => setBusqueda(e.target.value)
 }
-className = "w-full px-4 py-3 rounded-xl border border-gray-600 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 bg-gray-50"
+className = "w-full px-4 py-3 rounded-xl border border-slate-700 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 bg-white"
     />
     </div>
 
-{/* Botones de Filtro por Categoría - Ajustados a colores para fondo oscuro */ }
+{/* Botones de Filtro por Categoría */ }
 <div className="flex justify-center gap-3 mb-8" >
     <button
             onClick={ () => setCategoriaSeleccionada('todos') }
 className = {`px-5 py-2 rounded-full font-medium transition-all ${categoriaSeleccionada === 'todos'
         ? 'bg-blue-600 text-white shadow-md'
-        : 'bg-gray-800 text-gray-200 border border-gray-600 hover:bg-gray-700'
+        : 'bg-slate-900 text-gray-300 border border-slate-700 hover:bg-slate-800'
     }`}
           >
     Todos
@@ -118,7 +116,7 @@ className = {`px-5 py-2 rounded-full font-medium transition-all ${categoriaSelec
 onClick = {() => setCategoriaSeleccionada('camisetas')}
 className = {`px-5 py-2 rounded-full font-medium transition-all ${categoriaSeleccionada === 'camisetas'
         ? 'bg-blue-600 text-white shadow-md'
-        : 'bg-gray-800 text-gray-200 border border-gray-600 hover:bg-gray-700'
+        : 'bg-slate-900 text-gray-300 border border-slate-700 hover:bg-slate-800'
     }`}
           >
     Camisetas
@@ -127,17 +125,17 @@ className = {`px-5 py-2 rounded-full font-medium transition-all ${categoriaSelec
 onClick = {() => setCategoriaSeleccionada('gorras')}
 className = {`px-5 py-2 rounded-full font-medium transition-all ${categoriaSeleccionada === 'gorras'
         ? 'bg-blue-600 text-white shadow-md'
-        : 'bg-gray-800 text-gray-200 border border-gray-600 hover:bg-gray-700'
+        : 'bg-slate-900 text-gray-300 border border-slate-700 hover:bg-slate-800'
     }`}
           >
     Gorras
     </button>
     </div>
 
-{/* Mensaje de carga - Texto blanco */ }
+{/* Mensaje de carga */ }
 {
     cargando && (
-        <div className="text-center py-12 text-gray-300" > Cargando productos...</div>
+        <div className="text-center py-12 text-gray-400" > Cargando productos...</div>
         )
 }
 
@@ -149,7 +147,7 @@ className = {`px-5 py-2 rounded-full font-medium transition-all ${categoriaSelec
             productosFiltrados.map((producto) => (
                 <div
                 key= { producto.id }
-                className = "bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden flex flex-col hover:shadow-lg transition-shadow"
+                className = "bg-white rounded-2xl shadow-md border border-slate-800 overflow-hidden flex flex-col hover:shadow-xl transition-shadow"
                 >
                 <div className="w-full h-48 bg-gray-100 relative overflow-hidden" >
             <img
@@ -185,20 +183,20 @@ className = {`px-5 py-2 rounded-full font-medium transition-all ${categoriaSelec
 </div>
         )}
 
-{/* Si no hay resultados - Texto blanco */ }
+{/* Si no hay resultados */ }
 {
     !cargando && productosFiltrados.length === 0 && (
-        <div className="text-center py-12 text-gray-300" >
+        <div className="text-center py-12 text-gray-400" >
             No se encontraron productos con esos filtros.
           </div>
         )
 }
 </div>
 
-{/* Barra flotante inferior del Carrito - Se mantiene blanca para buen contraste */ }
+{/* Barra flotante inferior del Carrito */ }
 {
     carrito.length > 0 && (
-        <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 shadow-lg p-4 z-50" >
+        <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 shadow-2xl p-4 z-50" >
             <div className="max-w-4xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4" >
                 <div className="flex items-center gap-3" >
                     <span className="bg-black text-white text-sm font-bold px-3 py-1 rounded-full" >
