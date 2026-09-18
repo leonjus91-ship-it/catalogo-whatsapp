@@ -60,7 +60,6 @@ export default function Home() {
 
         mensaje += `\n*Total a pagar: $${total.toFixed(2)}*`
 
-        // Número actualizado a 593994195196
         const url = `https://wa.me/593994195196?text=${encodeURIComponent(mensaje)}`
         window.open(url, '_blank')
     }
@@ -79,15 +78,20 @@ export default function Home() {
     return (
         <main className= "min-h-screen py-8 px-4 sm:px-6 lg:px-8 pb-32 bg-slate-950 bg-[radial-gradient(#1e293b_1px,transparent_1px)] [background-size:24px_24px]" >
         <div className="max-w-7xl mx-auto" >
-        {/* Título de la Tienda */ }
-            < div className = "text-center mb-8" >
-                <h1 className="text-4xl font-extrabold text-white tracking-tight" >
-                    Catálogo de Productos
-                        </h1>
-                        < p className = "mt-2 text-lg text-gray-400" >
-                            Selecciona tus productos y pídelos juntos por WhatsApp
-                                </p>
-                                </div>
+        {/* Logo y Título de la Tienda */ }
+            < div className = "text-center mb-8 flex flex-col items-center" >
+                <img 
+            src="/logo.jpg"
+    alt = "Logo de la tienda"
+    className = "h-20 w-auto mb-4 object-contain drop-shadow-[0_0_10px_rgba(59,130,246,0.5)]"
+        />
+        <h1 className="text-4xl font-extrabold text-white tracking-tight" >
+            Catálogo de Productos
+                </h1>
+                < p className = "mt-2 text-lg text-gray-400" >
+                    Selecciona tus productos y pídelos juntos por WhatsApp
+                        </p>
+                        </div>
 
     {/* Barra de Búsqueda */ }
     <div className="max-w-md mx-auto mb-4" >
