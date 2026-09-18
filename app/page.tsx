@@ -22,6 +22,9 @@ export default function Home() {
     const [categoriaSeleccionada, setCategoriaSeleccionada] = useState('todos')
     const [cargando, setCargando] = useState(true)
 
+    // Estado para el carrito de compras
+    const [carrito, setCarrito] = useState<Producto[]>([])
+
     useEffect(() => {
         async function obtenerProductos() {
             const { data, error } = await supabase.from('productos').select('*')
@@ -36,6 +39,33 @@ export default function Home() {
         obtenerProductos()
     }, [])
 
+    const agregarAlCarrito = (producto: Producto) => {
+        setCarrito([...carrito, producto])
+    }
+
+    const eliminarDelCarrito = (index: number) => {
+        const nuevoCarrito = carrito.filter((_, i) => i !== index)
+        setCarrito(nuevoCarrito)
+    }
+
+    // Generar mensaje para WhatsApp con todos los productos del carrito
+    const enviarPedidoWhatsApp = () => {
+        if (carrito.length === 0) return
+
+        let mensaje = 'Hola, quiero realizar el siguiente pedido:\n\n'
+        let total = 0
+
+        carrito.forEach((item, index) => {
+            mensaje += `${index + 1}. ${item.nombre} - $${item.precio}\n`
+            total += item.precio
+        })
+
+        mensaje += `\n*Total a pagar: $${total.toFixed(2)}*`
+
+        const url = `https://wa.me/593996926920?text=${encodeURIComponent(mensaje)}`
+        window.open(url, '_blank')
+    }
+
     const productosFiltrados = productos.filter((producto) => {
         const coincideTexto = producto.nombre.toLowerCase().includes(busqueda.toLowerCase()) ||
             producto.descripcion.toLowerCase().includes(busqueda.toLowerCase())
@@ -48,7 +78,7 @@ export default function Home() {
     })
 
     return (
-        <main className= "min-h-screen bg-gray-50 py-8 px-4 sm:px-6 lg:px-8" >
+        <main className= "min-h-screen bg-gray-50 py-8 px-4 sm:px-6 lg:px-8 pb-32" >
         <div className="max-w-7xl mx-auto" >
         {/* Título de la Tienda */ }
             < div className = "text-center mb-8" >
@@ -56,7 +86,7 @@ export default function Home() {
                     Catálogo de Productos
                         </h1>
                         < p className = "mt-2 text-lg text-gray-600" >
-                            Pedidos directos por WhatsApp
+                            Selecciona tus productos y pídelos juntos por WhatsApp
                                 </p>
                                 </div>
 
@@ -140,14 +170,12 @@ className = {`px-5 py-2 rounded-full font-medium transition-all ${categoriaSelec
             <div className="text-xl font-bold text-gray-900 mb-4" >
             ${ producto.precio }
             </div>
-            < a
-                      href = {`https://wa.me/593996926920?text=${encodeURIComponent(`Hola, quiero comprar este modelo: ${producto.nombre}.\nAquí puedes ver la foto: ${producto.imagen_url}`)}`}
-    target = "_blank"
-    rel = "noopener noreferrer"
-    className = "w-full block text-center bg-green-600 hover:bg-green-700 text-white font-medium py-2.5 px-4 rounded-xl transition-colors shadow-sm"
+            < button
+                      onClick = {() => agregarAlCarrito(producto)}
+    className = "w-full block text-center bg-black hover:bg-gray-800 text-white font-medium py-2.5 px-4 rounded-xl transition-colors shadow-sm"
         >
-        Pedir por WhatsApp
-            </a>
+        Agregar al carrito
+            </button>
             </div>
             </div>
             </div>
@@ -165,6 +193,46 @@ className = {`px-5 py-2 rounded-full font-medium transition-all ${categoriaSelec
         )
 }
 </div>
-    </main>
+
+{/* Barra flotante inferior del Carrito */ }
+{
+    carrito.length > 0 && (
+        <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 shadow-lg p-4 z-50" >
+            <div className="max-w-4xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4" >
+                <div className="flex items-center gap-3" >
+                    <span className="bg-black text-white text-sm font-bold px-3 py-1 rounded-full" >
+                    { carrito.length } { carrito.length === 1 ? 'producto' : 'productos' }
+    </span>
+        < span className = "text-gray-700 font-medium" >
+            Total: ${ carrito.reduce((acc, item) => acc + item.precio, 0).toFixed(2) }
+    </span>
+        </div>
+
+        < div className = "flex items-center gap-2 overflow-x-auto max-w-xs sm:max-w-sm py-1" >
+        {
+            carrito.map((item, index) => (
+                <div key= { index } className = "relative flex-shrink-0 group" >
+                <img src={ item.imagen_url } alt = { item.nombre } className = "w-10 h-10 object-cover rounded-lg border" />
+                <button
+                    onClick={() => eliminarDelCarrito(index)}
+    className = "absolute -top-1 -right-1 bg-red-500 text-white rounded-full w-4 h-4 flex items-center justify-center text-xs shadow hover:bg-red-600"
+        >
+                    ×
+    </button>
+        </div>
+              ))
+}
+</div>
+
+    < button
+onClick = { enviarPedidoWhatsApp }
+className = "bg-green-600 hover:bg-green-700 text-white font-semibold py-2.5 px-6 rounded-xl transition-colors shadow-md flex items-center gap-2"
+    >
+    Enviar pedido por WhatsApp
+        </button>
+        </div>
+        </div>
+      )}
+</main>
   )
 }
