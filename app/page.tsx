@@ -78,7 +78,7 @@ export default function Home() {
     })
 
     return (
-        <main className= "min-h-screen bg-gray-50 py-8 px-4 sm:px-6 lg:px-8 pb-32" >
+        <main className= "min-h-screen bg-gradient-to-br from-gray-50 via-slate-100 to-zinc-200 py-8 px-4 sm:px-6 lg:px-8 pb-32" >
         <div className="max-w-7xl mx-auto" >
         {/* Título de la Tienda */ }
             < div className = "text-center mb-8" >
