@@ -22,7 +22,6 @@ export default function Home() {
     const [categoriaSeleccionada, setCategoriaSeleccionada] = useState('todos')
     const [cargando, setCargando] = useState(true)
 
-    // Estado para el carrito de compras
     const [carrito, setCarrito] = useState<Producto[]>([])
 
     useEffect(() => {
@@ -48,7 +47,6 @@ export default function Home() {
         setCarrito(nuevoCarrito)
     }
 
-    // Generar mensaje para WhatsApp con todos los productos del carrito
     const enviarPedidoWhatsApp = () => {
         if (carrito.length === 0) return
 
@@ -78,14 +76,17 @@ export default function Home() {
     })
 
     return (
-        <main className= "min-h-screen bg-gradient-to-br from-gray-50 via-slate-100 to-zinc-200 py-8 px-4 sm:px-6 lg:px-8 pb-32" >
+        // --- AQUI ESTA EL CAMBIO PRINCIPAL ---
+        // Usamos la imagen de ladrillos como fondo, la centramos y cubrimos toda la pantalla.
+        // La capa oscura 'bg-black/70' encima ayuda a que el texto blanco se lea bien.
+        <main className= "min-h-screen py-8 px-4 sm:px-6 lg:px-8 pb-32 bg-[url('https://images.unsplash.com/photo-1559571857-d97e4838d1b2?q=80&w=1280&auto=format&fit=crop')] bg-cover bg-center bg-fixed bg-blend-overlay bg-black/70" >
         <div className="max-w-7xl mx-auto" >
-        {/* Título de la Tienda */ }
+        {/* Título de la Tienda - Ajustado a color blanco por el fondo oscuro */ }
             < div className = "text-center mb-8" >
-                <h1 className="text-4xl font-extrabold text-gray-900 tracking-tight" >
+                <h1 className="text-4xl font-extrabold text-white tracking-tight" >
                     Catálogo de Productos
                         </h1>
-                        < p className = "mt-2 text-lg text-gray-600" >
+                        < p className = "mt-2 text-lg text-gray-300" >
                             Selecciona tus productos y pídelos juntos por WhatsApp
                                 </p>
                                 </div>
@@ -98,17 +99,17 @@ export default function Home() {
     value = { busqueda }
     onChange = {(e) => setBusqueda(e.target.value)
 }
-className = "w-full px-4 py-3 rounded-xl border border-gray-300 shadow-sm focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent text-gray-900"
+className = "w-full px-4 py-3 rounded-xl border border-gray-600 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 bg-gray-50"
     />
     </div>
 
-{/* Botones de Filtro por Categoría */ }
+{/* Botones de Filtro por Categoría - Ajustados a colores para fondo oscuro */ }
 <div className="flex justify-center gap-3 mb-8" >
     <button
             onClick={ () => setCategoriaSeleccionada('todos') }
 className = {`px-5 py-2 rounded-full font-medium transition-all ${categoriaSeleccionada === 'todos'
-        ? 'bg-black text-white shadow-md'
-        : 'bg-white text-gray-700 border border-gray-300 hover:bg-gray-100'
+        ? 'bg-blue-600 text-white shadow-md'
+        : 'bg-gray-800 text-gray-200 border border-gray-600 hover:bg-gray-700'
     }`}
           >
     Todos
@@ -116,8 +117,8 @@ className = {`px-5 py-2 rounded-full font-medium transition-all ${categoriaSelec
     < button
 onClick = {() => setCategoriaSeleccionada('camisetas')}
 className = {`px-5 py-2 rounded-full font-medium transition-all ${categoriaSeleccionada === 'camisetas'
-        ? 'bg-black text-white shadow-md'
-        : 'bg-white text-gray-700 border border-gray-300 hover:bg-gray-100'
+        ? 'bg-blue-600 text-white shadow-md'
+        : 'bg-gray-800 text-gray-200 border border-gray-600 hover:bg-gray-700'
     }`}
           >
     Camisetas
@@ -125,18 +126,18 @@ className = {`px-5 py-2 rounded-full font-medium transition-all ${categoriaSelec
     < button
 onClick = {() => setCategoriaSeleccionada('gorras')}
 className = {`px-5 py-2 rounded-full font-medium transition-all ${categoriaSeleccionada === 'gorras'
-        ? 'bg-black text-white shadow-md'
-        : 'bg-white text-gray-700 border border-gray-300 hover:bg-gray-100'
+        ? 'bg-blue-600 text-white shadow-md'
+        : 'bg-gray-800 text-gray-200 border border-gray-600 hover:bg-gray-700'
     }`}
           >
     Gorras
     </button>
     </div>
 
-{/* Mensaje de carga */ }
+{/* Mensaje de carga - Texto blanco */ }
 {
     cargando && (
-        <div className="text-center py-12 text-gray-500" > Cargando productos...</div>
+        <div className="text-center py-12 text-gray-300" > Cargando productos...</div>
         )
 }
 
@@ -148,7 +149,7 @@ className = {`px-5 py-2 rounded-full font-medium transition-all ${categoriaSelec
             productosFiltrados.map((producto) => (
                 <div
                 key= { producto.id }
-                className = "bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden flex flex-col hover:shadow-md transition-shadow"
+                className = "bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden flex flex-col hover:shadow-lg transition-shadow"
                 >
                 <div className="w-full h-48 bg-gray-100 relative overflow-hidden" >
             <img
@@ -172,7 +173,7 @@ className = {`px-5 py-2 rounded-full font-medium transition-all ${categoriaSelec
             </div>
             < button
                       onClick = {() => agregarAlCarrito(producto)}
-    className = "w-full block text-center bg-black hover:bg-gray-800 text-white font-medium py-2.5 px-4 rounded-xl transition-colors shadow-sm"
+    className = "w-full block text-center bg-blue-600 hover:bg-blue-700 text-white font-medium py-2.5 px-4 rounded-xl transition-colors shadow-sm"
         >
         Agregar al carrito
             </button>
@@ -184,17 +185,17 @@ className = {`px-5 py-2 rounded-full font-medium transition-all ${categoriaSelec
 </div>
         )}
 
-{/* Si no hay resultados */ }
+{/* Si no hay resultados - Texto blanco */ }
 {
     !cargando && productosFiltrados.length === 0 && (
-        <div className="text-center py-12 text-gray-500" >
+        <div className="text-center py-12 text-gray-300" >
             No se encontraron productos con esos filtros.
           </div>
         )
 }
 </div>
 
-{/* Barra flotante inferior del Carrito */ }
+{/* Barra flotante inferior del Carrito - Se mantiene blanca para buen contraste */ }
 {
     carrito.length > 0 && (
         <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 shadow-lg p-4 z-50" >
