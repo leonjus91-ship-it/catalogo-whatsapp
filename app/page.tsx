@@ -60,7 +60,8 @@ export default function Home() {
 
         mensaje += `\n*Total a pagar: $${total.toFixed(2)}*`
 
-        const url = `https://wa.me/593996926920?text=${encodeURIComponent(mensaje)}`
+        // Número actualizado a 593994195196
+        const url = `https://wa.me/593994195196?text=${encodeURIComponent(mensaje)}`
         window.open(url, '_blank')
     }
 
@@ -76,7 +77,6 @@ export default function Home() {
     })
 
     return (
-        // Fondo oscuro texturizado con patrón de cuadrícula sutil en tonos neón/azulados
         <main className= "min-h-screen py-8 px-4 sm:px-6 lg:px-8 pb-32 bg-slate-950 bg-[radial-gradient(#1e293b_1px,transparent_1px)] [background-size:24px_24px]" >
         <div className="max-w-7xl mx-auto" >
         {/* Título de la Tienda */ }
