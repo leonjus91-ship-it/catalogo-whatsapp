@@ -60,7 +60,7 @@ export default function Home() {
 
         mensaje += `\n*Total a pagar: $${total.toFixed(2)}*`
 
-        const url = `https://wa.me/593994195196?text=${encodeURIComponent(mensaje)}`
+        const url = `https://wa.me/593996926920?text=${encodeURIComponent(mensaje)}`
         window.open(url, '_blank')
     }
 
