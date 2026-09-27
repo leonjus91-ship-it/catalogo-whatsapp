@@ -34,7 +34,7 @@ export const descargarReciboPDF = (carrito: Producto[]) => {
     y += 5
     doc.text("         JL FLOW STORE           ", margenX, y)
     y += 5
-    doc.text("      COMPROBANTE DE ROPA        ", margenX, y)
+    doc.text("     COMPROBANTE DE COMPRA       ", margenX, y)
     y += 5
     doc.text("==================================", margenX, y)
     y += 6
