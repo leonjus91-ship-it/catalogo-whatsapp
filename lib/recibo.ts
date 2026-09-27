@@ -20,7 +20,7 @@ export const descargarReciboPDF = (carrito: Producto[]) => {
     const doc = new jsPDF({
         orientation: "portrait",
         unit: "mm",
-        format: [80, 160] // Aumentamos un poco la altura para que entre el nombre
+        format: [80, 160] // Altura adaptada para el ticket
     })
 
     doc.setFont("courier", "normal")
@@ -34,7 +34,7 @@ export const descargarReciboPDF = (carrito: Producto[]) => {
     y += 5
     doc.text("         JL FLOW STORE           ", margenX, y)
     y += 5
-    doc.text("         CATALOGO DE ROPA        ", margenX, y)
+    doc.text("      COMPROBANTE DE ROPA        ", margenX, y)
     y += 5
     doc.text("==================================", margenX, y)
     y += 6
