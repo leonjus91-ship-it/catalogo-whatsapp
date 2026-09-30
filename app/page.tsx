@@ -44,7 +44,7 @@ export default function Home() {
     const agregarAlCarritoConCantidad = (producto: Producto, cantidad: number) => {
         const nuevosItems = Array(cantidad).fill(producto)
         setCarrito([...carrito, ...nuevosItems])
-        setProductoSeleccionado(null) // Cerrar modal al agregar
+        setProductoSeleccionado(null)
         setCantidadModal(1)
     }
 
@@ -172,8 +172,9 @@ export default function Home() {
                                         </p>
                                     </div>
                                     <div>
-                                        <div className="text-xl font-bold text-gray-900 mb-4">
-                                            ${producto.precio}
+                                        <div className="flex items-center gap-2 mb-4">
+                                            <span className="text-lg text-gray-400 line-through">$45</span>
+                                            <span className="text-xl font-bold text-gray-900">${producto.precio}</span>
                                         </div>
                                         <span className="w-full block text-center bg-slate-900 hover:bg-black text-white font-medium py-2.5 px-4 rounded-xl transition-colors shadow-sm text-sm">
                                             Ver detalles
@@ -193,7 +194,7 @@ export default function Home() {
                 )}
             </div>
 
-            {/* MODAL DE DETALLE DE PRODUCTO (Estilo Tienda Pro) */}
+            {/* MODAL DE DETALLE DE PRODUCTO */}
             {productoSeleccionado && (
                 <div className="fixed inset-0 bg-black/80 flex items-center justify-center p-4 z-50">
                     <div className="bg-white rounded-3xl max-w-3xl w-full p-6 md:p-8 relative flex flex-col md:flex-row gap-8 shadow-2xl">
@@ -214,8 +215,11 @@ export default function Home() {
                             <div>
                                 <span className="bg-red-100 text-red-600 text-xs font-bold px-2.5 py-1 rounded-md uppercase">¡Oferta!</span>
                                 <h2 className="text-2xl font-black text-gray-900 mt-2 mb-2">{productoSeleccionado.nombre}</h2>
+
+                                {/* Precios con oferta (Antes tachado y Ahora destacado) */}
                                 <div className="flex items-center gap-3 mb-4">
-                                    <span className="text-xl font-bold text-gray-900">${productoSeleccionado.precio}</span>
+                                    <span className="text-lg text-gray-400 line-through">$45</span>
+                                    <span className="text-2xl font-black text-gray-900">${productoSeleccionado.precio}</span>
                                 </div>
 
                                 <div className="text-gray-600 text-sm space-y-2 mb-6 bg-gray-50 p-4 rounded-xl border border-gray-100">
