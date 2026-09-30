@@ -26,6 +26,9 @@ export default function CatalogoPage() {
     const [productoSeleccionado, setProductoSeleccionado] = useState<Producto | null>(null)
     const [carrito, setCarrito] = useState<{ producto: Producto; cantidad: number }[]>([])
 
+    // Estado para el nombre del cliente (puedes cambiar el valor por defecto si gustas)
+    const [nombreCliente, setNombreCliente] = useState<string>('RONALD LEON')
+
     useEffect(() => {
         cargarProductos()
     }, [])
@@ -63,7 +66,7 @@ export default function CatalogoPage() {
     const enviarPedidoWhatsApp = () => {
         if (carrito.length === 0) return
 
-        let mensaje = '¡Hola! 🧢 Me gustaría hacer el siguiente pedido en JL Flow Store:\n\n'
+        let mensaje = `¡Hola! 🧢 Me gustaría hacer el siguiente pedido en JL Flow Store (Cliente: ${nombreCliente || 'Cliente'}):\n\n`
         let total = 0
 
         carrito.forEach((item) => {
@@ -102,6 +105,8 @@ export default function CatalogoPage() {
             second: '2-digit'
         })
 
+        const clienteFinal = nombreCliente.trim() !== '' ? nombreCliente.toUpperCase() : 'CLIENTE GENERAL'
+
         const ventanaImpresion = window.open('', '_blank')
         if (!ventanaImpresion) return
 
@@ -132,7 +137,7 @@ export default function CatalogoPage() {
 ========================================
 
 FECHA: ${fechaActual}
-CLIENTE: RONALD LEON
+CLIENTE: ${clienteFinal}
 
 ----------------------------------------
 CANT.  PRODUCTO                   SUBTOTAL
@@ -160,7 +165,7 @@ TOTAL A PAGAR: $${total.toFixed(2)}
     const precioTotalCarrito = carrito.reduce((acc, item) => acc + item.producto.precio * item.cantidad, 0)
 
     return (
-        <main className="min-h-screen bg-[#0b0f19] text-white pb-32">
+        <main className="min-h-screen bg-[#0b0f19] text-white pb-40">
             {/* Header / Banner Principal */}
             <header className="bg-black text-white py-10 px-4 text-center shadow-lg border-b border-gray-800">
                 <h1 className="text-4xl font-black tracking-wider uppercase">JL FLOW STORE</h1>
@@ -316,40 +321,45 @@ TOTAL A PAGAR: $${total.toFixed(2)}
 
             {/* Barra Inferior Flotante */}
             {carrito.length > 0 && (
-                <div className="fixed bottom-0 left-0 right-0 bg-[#151b2b] border-t border-gray-800 p-4 shadow-2xl z-40 flex flex-col sm:flex-row items-center justify-between gap-4 max-w-7xl mx-auto sm:rounded-t-2xl">
-                    <div className="flex items-center gap-4 text-sm font-semibold">
-                        <span className="bg-black px-3 py-1.5 rounded-full text-white text-xs border border-gray-700">
-                            {totalProductosCarrito} producto{totalProductosCarrito > 1 ? 's' : ''}
-                        </span>
-                        <span>Total: <strong className="text-blue-400">${precioTotalCarrito.toFixed(2)}</strong></span>
+                <div className="fixed bottom-0 left-0 right-0 bg-[#151b2b] border-t border-gray-800 p-4 shadow-2xl z-40 max-w-7xl mx-auto sm:rounded-t-2xl flex flex-col gap-3">
 
-                        {/* Miniaturas de productos en el carrito */}
-                        <div className="hidden md:flex items-center gap-1 overflow-x-auto max-w-xs">
-                            {carrito.map((item, idx) => (
-                                <img
-                                    key={idx}
-                                    src={item.producto.imagen_url}
-                                    alt={item.producto.nombre}
-                                    className="w-10 h-10 object-cover rounded-lg border border-gray-700"
-                                    title={`${item.cantidad}x ${item.producto.nombre}`}
-                                />
-                            ))}
-                        </div>
+                    {/* Fila superior: Input para cambiar el nombre del cliente en tiempo real */}
+                    <div className="flex flex-col sm:flex-row items-center justify-between gap-3 bg-black/40 p-2.5 rounded-xl border border-gray-800">
+                        <label className="text-xs font-semibold text-gray-300 whitespace-nowrap">
+                            👤 Nombre en el Comprobante:
+                        </label>
+                        <input
+                            type="text"
+                            value={nombreCliente}
+                            onChange={(e) => setNombreCliente(e.target.value)}
+                            placeholder="Ej. RONALD LEON"
+                            className="w-full sm:w-64 px-3 py-1.5 bg-[#0b0f19] border border-gray-700 rounded-lg text-xs text-white focus:outline-none focus:ring-1 focus:ring-blue-600 font-mono uppercase"
+                        />
                     </div>
 
-                    <div className="flex items-center gap-3 w-full sm:w-auto">
-                        <button
-                            onClick={descargarReciboPDF}
-                            className="flex-1 sm:flex-none bg-[#1e293b] hover:bg-gray-700 text-white px-5 py-2.5 rounded-xl font-bold text-sm transition-colors border border-gray-700 shadow-sm"
-                        >
-                            Descargar Recibo PDF
-                        </button>
-                        <button
-                            onClick={enviarPedidoWhatsApp}
-                            className="flex-1 sm:flex-none bg-green-600 hover:bg-green-700 text-white px-6 py-2.5 rounded-xl font-bold text-sm transition-colors shadow-md flex items-center justify-center gap-2"
-                        >
-                            Enviar pedido por WhatsApp
-                        </button>
+                    {/* Fila inferior: Totales y Botones de acción */}
+                    <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
+                        <div className="flex items-center gap-4 text-sm font-semibold w-full sm:w-auto justify-between sm:justify-start">
+                            <span className="bg-black px-3 py-1.5 rounded-full text-white text-xs border border-gray-700">
+                                {totalProductosCarrito} producto{totalProductosCarrito > 1 ? 's' : ''}
+                            </span>
+                            <span>Total: <strong className="text-blue-400">${precioTotalCarrito.toFixed(2)}</strong></span>
+                        </div>
+
+                        <div className="flex items-center gap-3 w-full sm:w-auto">
+                            <button
+                                onClick={descargarReciboPDF}
+                                className="flex-1 sm:flex-none bg-[#1e293b] hover:bg-gray-700 text-white px-5 py-2.5 rounded-xl font-bold text-sm transition-colors border border-gray-700 shadow-sm"
+                            >
+                                Descargar Comprobante PDF
+                            </button>
+                            <button
+                                onClick={enviarPedidoWhatsApp}
+                                className="flex-1 sm:flex-none bg-green-600 hover:bg-green-700 text-white px-6 py-2.5 rounded-xl font-bold text-sm transition-colors shadow-md flex items-center justify-center gap-2"
+                            >
+                                Enviar pedido por WhatsApp
+                            </button>
+                        </div>
                     </div>
                 </div>
             )}
