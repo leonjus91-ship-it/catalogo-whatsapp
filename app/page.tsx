@@ -80,8 +80,92 @@ export default function CatalogoPage() {
     }
 
     const descargarReciboPDF = () => {
-        // Lógica para descargar el recibo o generar la vista de impresión/PDF
-        window.print()
+        if (carrito.length === 0) return
+
+        let total = 0
+        let itemsHtml = carrito.map(item => {
+            const subtotal = item.producto.precio * item.cantidad
+            total += subtotal
+            return `
+                <tr>
+                    <td style="padding: 10px; border-bottom: 1px solid #eee;">${item.producto.nombre}</td>
+                    <td style="padding: 10px; border-bottom: 1px solid #eee; text-align: center;">${item.cantidad}</td>
+                    <td style="padding: 10px; border-bottom: 1px solid #eee; text-align: right;">$${item.producto.precio.toFixed(2)}</td>
+                    <td style="padding: 10px; border-bottom: 1px solid #eee; text-align: right;">$${subtotal.toFixed(2)}</td>
+                </tr>
+            `
+        }).join('')
+
+        const fechaActual = new Date().toLocaleDateString('es-EC', {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric'
+        })
+
+        const ventanaImpresion = window.open('', '_blank')
+        if (!ventanaImpresion) return
+
+        ventanaImpresion.document.write(`
+            <html>
+                <head>
+                    <title>Recibo de Pedido - JL Flow Store</title>
+                    <style>
+                        body { font-family: Arial, sans-serif; color: #333; padding: 30px; margin: 0; }
+                        .header { text-align: center; border-bottom: 2px solid #000; padding-bottom: 15px; margin-bottom: 25px; }
+                        .header h1 { margin: 0; font-size: 24px; color: #111; letter-spacing: 1px; }
+                        .header p { margin: 5px 0 0; font-size: 13px; color: #666; }
+                        .info { margin-bottom: 20px; font-size: 14px; }
+                        table { width: 100%; border-collapse: collapse; margin-bottom: 25px; font-size: 14px; }
+                        th { background-color: #f4f4f4; padding: 10px; text-align: left; border-bottom: 2px solid #ddd; }
+                        th:nth-child(2), th:nth-child(3), th:nth-child(4) { text-align: right; }
+                        td:nth-child(2) { text-align: center; }
+                        td:nth-child(3), td:nth-child(4) { text-align: right; }
+                        .total-section { text-align: right; font-size: 16px; font-weight: bold; margin-top: 15px; border-top: 2px solid #000; padding-top: 15px; }
+                        .footer { text-align: center; margin-top: 40px; font-size: 12px; color: #777; border-top: 1px solid #eee; padding-top: 15px; }
+                    </style>
+                </head>
+                <body>
+                    <div class="header">
+                        <h1>JL FLOW STORE</h1>
+                        <p>Streetwear, gorras y estilo urbano</p>
+                    </div>
+                    
+                    <div class="info">
+                        <p><strong>Fecha:</strong> ${fechaActual}</p>
+                        <p><strong>Comprobante de Pedido</strong></p>
+                    </div>
+
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Producto</th>
+                                <th>Cant.</th>
+                                <th>Precio Unit.</th>
+                                <th>Subtotal</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${itemsHtml}
+                        </tbody>
+                    </table>
+
+                    <div class="total-section">
+                        Total a Pagar: $${total.toFixed(2)}
+                    </div>
+
+                    <div class="footer">
+                        <p>¡Gracias por tu compra en JL Flow Store! Quedamos atentos a tu confirmación por WhatsApp.</p>
+                    </div>
+
+                    <script>
+                        window.onload = function() {
+                            window.print();
+                        }
+                    </script>
+                </body>
+            </html>
+        `)
+        ventanaImpresion.document.close()
     }
 
     const totalProductosCarrito = carrito.reduce((acc, item) => acc + item.cantidad, 0)
