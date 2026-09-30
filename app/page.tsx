@@ -176,20 +176,21 @@ export default function CatalogoPage() {
                 </div>
             </div>
 
-            {/* Modal de Detalle del Producto */}
+            {/* Modal de Detalle del Producto Ajustado */}
             {productoSeleccionado && (
-                <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 z-50">
-                    <div className="bg-white rounded-3xl max-w-lg w-full overflow-hidden shadow-2xl relative animate-in fade-in zoom-in duration-200">
+                <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center p-3 z-50">
+                    <div className="bg-white rounded-3xl max-w-md w-full max-h-[90vh] flex flex-col overflow-hidden shadow-2xl relative animate-in fade-in zoom-in duration-200">
                         <button
                             onClick={() => setProductoSeleccionado(null)}
-                            className="absolute top-4 right-4 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-full w-9 h-9 flex items-center justify-center font-bold z-10 transition-colors"
+                            className="absolute top-3 right-3 bg-black/60 hover:bg-black text-white rounded-full w-8 h-8 flex items-center justify-center font-bold z-20 transition-colors"
                         >
                             ✕
                         </button>
 
-                        <div className="h-72 bg-gray-100 relative">
+                        {/* Imagen ajustada con altura controlada */}
+                        <div className="h-48 sm:h-56 bg-gray-100 relative flex-shrink-0">
                             {productoSeleccionado.precio_anterior && productoSeleccionado.precio_anterior > productoSeleccionado.precio && (
-                                <span className="absolute top-4 left-4 bg-red-600 text-white text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider shadow z-10">
+                                <span className="absolute top-3 left-3 bg-red-600 text-white text-xs font-bold px-2.5 py-1 rounded-full uppercase tracking-wider shadow z-10">
                                     Oferta
                                 </span>
                             )}
@@ -200,26 +201,27 @@ export default function CatalogoPage() {
                             />
                         </div>
 
-                        <div className="p-6">
-                            <h2 className="text-2xl font-black text-gray-900 mb-1">
+                        {/* Contenido con scroll interno si es muy largo */}
+                        <div className="p-5 overflow-y-auto flex-grow">
+                            <h2 className="text-xl font-black text-gray-900 mb-1">
                                 {productoSeleccionado.nombre}
                             </h2>
-                            <div className="flex items-center gap-3 mb-4">
-                                <span className="text-2xl font-bold text-black">
+                            <div className="flex items-center gap-3 mb-3">
+                                <span className="text-xl font-bold text-black">
                                     ${productoSeleccionado.precio.toFixed(2)}
                                 </span>
                                 {productoSeleccionado.precio_anterior && productoSeleccionado.precio_anterior > productoSeleccionado.precio && (
-                                    <span className="text-base text-gray-400 line-through">
+                                    <span className="text-sm text-gray-400 line-through">
                                         ${productoSeleccionado.precio_anterior.toFixed(2)}
                                     </span>
                                 )}
                             </div>
 
-                            {/* Sección dinámica de especificaciones con viñetas */}
-                            <div className="text-gray-700 text-sm mb-6 bg-gray-50 p-4 rounded-xl border border-gray-100">
-                                <p className="font-bold text-gray-900 mb-2">Detalles del producto:</p>
+                            {/* Sección dinámica de especificaciones */}
+                            <div className="text-gray-700 text-xs sm:text-sm mb-4 bg-gray-50 p-3.5 rounded-xl border border-gray-100">
+                                <p className="font-bold text-gray-900 mb-1.5">Detalles del producto:</p>
                                 {productoSeleccionado.especificaciones ? (
-                                    <ul className="space-y-1.5 list-disc list-inside text-gray-700">
+                                    <ul className="space-y-1 list-disc list-inside text-gray-700">
                                         {productoSeleccionado.especificaciones
                                             .split('\n')
                                             .map((spec: string, index: number) => (
@@ -236,7 +238,7 @@ export default function CatalogoPage() {
                                     agregarAlCarrito(productoSeleccionado)
                                     setProductoSeleccionado(null)
                                 }}
-                                className="w-full bg-black text-white py-3 rounded-xl font-bold hover:bg-gray-800 transition-colors"
+                                className="w-full bg-black text-white py-3 rounded-xl font-bold hover:bg-gray-800 transition-colors text-sm"
                             >
                                 Añadir al Carrito
                             </button>
