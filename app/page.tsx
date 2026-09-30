@@ -83,21 +83,21 @@ export default function CatalogoPage() {
         <main className="min-h-screen bg-gray-50 text-gray-900 pb-24">
             {/* Header / Banner Principal */}
             <header className="bg-black text-white py-10 px-4 text-center shadow-lg">
-                <h1 className="text-4xl font-black tracking-wider uppercase">JL Flow Store</h1>
+                <h1 className="text-4xl font-black tracking-wider uppercase">JL FLOW STORE</h1>
                 <p className="text-sm text-gray-400 mt-1 font-medium">Streetwear, gorras y estilo urbano</p>
             </header>
 
-            {/* Contenedor principal centrado con ancho máximo controlado */}
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-8">
+            {/* Contenedor general amplio (ocupa todo el ancho con márgenes laterales limpios) */}
+            <div className="w-full px-4 sm:px-8 lg:px-12 mt-8">
 
-                {/* Barra de búsqueda y Filtros ordenados */}
-                <div className="bg-white p-4 rounded-2xl shadow-sm border border-gray-100 mb-8 flex flex-col md:flex-row gap-4 justify-between items-center">
+                {/* Barra de búsqueda y Filtros alineados a lo ancho */}
+                <div className="bg-white p-5 rounded-2xl shadow-sm border border-gray-100 mb-8 flex flex-col md:flex-row gap-4 justify-between items-center">
                     <input
                         type="text"
                         placeholder="🔍 Buscar gorras, camisetas..."
                         value={busqueda}
                         onChange={(e) => setBusqueda(e.target.value)}
-                        className="w-full md:w-96 px-4 py-2.5 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-black text-sm bg-gray-50"
+                        className="w-full md:w-[420px] px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-black text-sm bg-gray-50"
                     />
 
                     <div className="flex gap-2 overflow-x-auto w-full md:w-auto pb-1 md:pb-0 justify-start md:justify-end">
@@ -105,7 +105,7 @@ export default function CatalogoPage() {
                             <button
                                 key={cat}
                                 onClick={() => setCategoriaSeleccionada(cat)}
-                                className={`px-5 py-2 rounded-xl text-sm font-semibold capitalize transition-all whitespace-nowrap ${categoriaSeleccionada === cat
+                                className={`px-6 py-2.5 rounded-xl text-sm font-semibold capitalize transition-all whitespace-nowrap ${categoriaSeleccionada === cat
                                         ? 'bg-black text-white shadow-md'
                                         : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                                     }`}
@@ -116,8 +116,8 @@ export default function CatalogoPage() {
                     </div>
                 </div>
 
-                {/* Grid de Productos Equilibrado */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                {/* Grid de Productos amplio de lado a lado */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
                     {productosFiltrados.map((producto) => (
                         <div
                             key={producto.id}
@@ -131,7 +131,7 @@ export default function CatalogoPage() {
                             )}
 
                             <div
-                                className="cursor-pointer relative h-60 bg-gray-100 overflow-hidden"
+                                className="cursor-pointer relative h-64 bg-gray-100 overflow-hidden"
                                 onClick={() => setProductoSeleccionado(producto)}
                             >
                                 <img
