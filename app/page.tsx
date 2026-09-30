@@ -107,7 +107,7 @@ export default function CatalogoPage() {
 
         mensaje += `\n*Total a pagar: $${total.toFixed(2)}*\n\n¡Quedo atento para coordinar el pago y envío!`
 
-        const numeroWhatsApp = '593996926920' // Número configurado para JL Flow Store
+        const numeroWhatsApp = '593996926920' // Número oficial configurado para JL Flow Store
         const urlWhatsApp = `https://wa.me/${numeroWhatsApp}?text=${encodeURIComponent(mensaje)}`
         window.open(urlWhatsApp, '_blank')
     }
@@ -167,7 +167,7 @@ export default function CatalogoPage() {
                     <div class="ticket-container">
 ========================================
              JL FLOW STORE
-         COMPROBANTE DE COMPRA
+        COMPROBANTE DE COMPRA
 ========================================
 
 FECHA: ${fechaActual}
@@ -212,7 +212,7 @@ TOTAL A PAGAR: $${total.toFixed(2)}
     {/* Barra de búsqueda y Filtros */ }
         < div className = "bg-[#151b2b] p-4 rounded-2xl shadow-md border border-gray-800 mb-8 flex flex-col md:flex-row gap-4 justify-between items-center" >
             <input
-                        type="text"
+                    type="text"
     placeholder = "🔍 Buscar gorras, camisetas..."
     value = { busqueda }
     onChange = {(e) => setBusqueda(e.target.value)
@@ -224,11 +224,11 @@ className = "w-full md:w-96 px-4 py-2.5 rounded-xl border border-gray-700 bg-[#0
     {
         ['todos', 'gorras', 'camisetas'].map((cat) => (
             <button
-                                key= { cat }
-                                onClick = {() => setCategoriaSeleccionada(cat)}
+                            key= { cat }
+                            onClick = {() => setCategoriaSeleccionada(cat)}
 className = {`px-5 py-2 rounded-xl text-sm font-semibold capitalize transition-all whitespace-nowrap ${categoriaSeleccionada === cat
-    ? 'bg-blue-600 text-white shadow-md'
-    : 'bg-[#1e293b] text-gray-300 hover:bg-gray-700'
+        ? 'bg-blue-600 text-white shadow-md'
+        : 'bg-[#1e293b] text-gray-300 hover:bg-gray-700'
     }`}
                             >
 { cat }
@@ -298,7 +298,7 @@ className = "w-full bg-blue-600 text-white py-2.5 rounded-xl text-xs font-bold h
         </div>
         </div>
         </div>
-                    ))}
+                            ))}
 </div>
     </div>
 
@@ -316,7 +316,7 @@ className = "w-full bg-blue-600 text-white py-2.5 rounded-xl text-xs font-bold h
 
         < div className = "h-56 bg-gray-100 relative flex-shrink-0" >
             <img
-                                src={ productoSeleccionado.imagen_url }
+                                    src={ productoSeleccionado.imagen_url }
     alt = { productoSeleccionado.nombre }
     className = "w-full h-full object-cover"
         />
@@ -343,9 +343,9 @@ className = "w-full bg-blue-600 text-white py-2.5 rounded-xl text-xs font-bold h
                     ))
             }
             </ul>
-                                ) : (
+                                        ) : (
             <p className= "text-gray-600" > { productoSeleccionado.descripcion } </p>
-                                )
+                                        )
     }
     </div>
 
@@ -431,10 +431,10 @@ className = "w-full sm:w-72 px-3 py-1.5 bg-[#0b0f19] border border-gray-700 roun
     < div className = "flex flex-col sm:flex-row items-center justify-between gap-4" >
         <div className="flex items-center gap-4 text-sm font-semibold w-full sm:w-auto justify-between sm:justify-start" >
             <button
-                                onClick={ () => setMostrarCarritoModal(true) }
+                            onClick={ () => setMostrarCarritoModal(true) }
 className = "bg-black hover:bg-gray-900 px-4 py-2 rounded-full text-white text-xs border border-gray-700 flex items-center gap-2 transition-all cursor-pointer shadow-md"
     >
-                                🛒 <span className="underline font-bold" > { totalProductosCarrito } producto{ totalProductosCarrito > 1 ? 's' : '' } (Ver carrito)</span>
+                            🛒 <span className="underline font-bold" > { totalProductosCarrito } producto{ totalProductosCarrito > 1 ? 's' : '' } (Ver carrito)</span>
     </button>
     < span > Total: <strong className="text-blue-400" > ${ precioTotalCarrito.toFixed(2) } </strong></span >
         </div>
@@ -444,7 +444,7 @@ className = "bg-black hover:bg-gray-900 px-4 py-2 rounded-full text-white text-x
 {
     esLocalhost && (
         <button
-                                    onClick={ descargarReciboPDF }
+                                onClick={ descargarReciboPDF }
     className = "flex-1 sm:flex-none bg-[#1e293b] hover:bg-gray-700 text-white px-5 py-2.5 rounded-xl font-bold text-sm transition-colors border border-gray-700 shadow-sm"
         >
         Descargar Comprobante PDF
