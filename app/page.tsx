@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react'
 import { createClient } from '@supabase/supabase-js'
 
-// Configuración de Supabase (reemplaza con tus llaves si es necesario, o usa tus variables de entorno)
+// Configuración de Supabase
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || ''
 const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || ''
 const supabase = createClient(supabaseUrl, supabaseKey)
@@ -13,6 +13,7 @@ interface Producto {
     nombre: string
     descripcion: string
     precio: number
+    precio_anterior?: number
     imagen_url: string
     categoria?: string
     especificaciones?: string
@@ -118,8 +119,15 @@ export default function CatalogoPage() {
                     {productosFiltrados.map((producto) => (
                         <div
                             key={producto.id}
-                            className="bg-white rounded-2xl shadow-sm hover:shadow-md transition-shadow border border-gray-100 overflow-hidden flex flex-col justify-between"
+                            className="bg-white rounded-2xl shadow-sm hover:shadow-md transition-shadow border border-gray-100 overflow-hidden flex flex-col justify-between relative"
                         >
+                            {/* Etiqueta flotante de Oferta si tiene precio anterior */}
+                            {producto.precio_anterior && producto.precio_anterior > producto.precio && (
+                                <span className="absolute top-3 left-3 bg-red-600 text-white text-xs font-bold px-2.5 py-1 rounded-full uppercase tracking-wider shadow z-10">
+                                    Oferta
+                                </span>
+                            )}
+
                             <div
                                 className="cursor-pointer relative h-56 bg-gray-100 overflow-hidden"
                                 onClick={() => setProductoSeleccionado(producto)}
@@ -145,9 +153,16 @@ export default function CatalogoPage() {
                                 </div>
 
                                 <div className="mt-4 flex items-center justify-between">
-                                    <span className="text-xl font-bold text-gray-900">
-                                        ${producto.precio.toFixed(2)}
-                                    </span>
+                                    <div className="flex flex-col">
+                                        {producto.precio_anterior && producto.precio_anterior > producto.precio && (
+                                            <span className="text-xs text-gray-400 line-through">
+                                                ${producto.precio_anterior.toFixed(2)}
+                                            </span>
+                                        )}
+                                        <span className="text-xl font-bold text-gray-900">
+                                            ${producto.precio.toFixed(2)}
+                                        </span>
+                                    </div>
                                     <button
                                         onClick={() => agregarAlCarrito(producto)}
                                         className="bg-black text-white px-4 py-2 rounded-xl text-sm font-semibold hover:bg-gray-800 transition-colors"
@@ -172,7 +187,12 @@ export default function CatalogoPage() {
                             ✕
                         </button>
 
-                        <div className="h-72 bg-gray-100">
+                        <div className="h-72 bg-gray-100 relative">
+                            {productoSeleccionado.precio_anterior && productoSeleccionado.precio_anterior > productoSeleccionado.precio && (
+                                <span className="absolute top-4 left-4 bg-red-600 text-white text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider shadow z-10">
+                                    Oferta
+                                </span>
+                            )}
                             <img
                                 src={productoSeleccionado.imagen_url}
                                 alt={productoSeleccionado.nombre}
@@ -184,9 +204,16 @@ export default function CatalogoPage() {
                             <h2 className="text-2xl font-black text-gray-900 mb-1">
                                 {productoSeleccionado.nombre}
                             </h2>
-                            <p className="text-2xl font-bold text-black mb-4">
-                                ${productoSeleccionado.precio.toFixed(2)}
-                            </p>
+                            <div className="flex items-center gap-3 mb-4">
+                                <span className="text-2xl font-bold text-black">
+                                    ${productoSeleccionado.precio.toFixed(2)}
+                                </span>
+                                {productoSeleccionado.precio_anterior && productoSeleccionado.precio_anterior > productoSeleccionado.precio && (
+                                    <span className="text-base text-gray-400 line-through">
+                                        ${productoSeleccionado.precio_anterior.toFixed(2)}
+                                    </span>
+                                )}
+                            </div>
 
                             {/* Sección dinámica de especificaciones con viñetas */}
                             <div className="text-gray-700 text-sm mb-6 bg-gray-50 p-4 rounded-xl border border-gray-100">
