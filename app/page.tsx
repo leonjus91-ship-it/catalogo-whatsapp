@@ -83,23 +83,23 @@ export default function CatalogoPage() {
         if (carrito.length === 0) return
 
         let total = 0
-        let itemsHtml = carrito.map(item => {
+        let itemsTexto = carrito.map(item => {
             const subtotal = item.producto.precio * item.cantidad
             total += subtotal
-            return `
-                <tr>
-                    <td style="padding: 10px; border-bottom: 1px solid #eee;">${item.producto.nombre}</td>
-                    <td style="padding: 10px; border-bottom: 1px solid #eee; text-align: center;">${item.cantidad}</td>
-                    <td style="padding: 10px; border-bottom: 1px solid #eee; text-align: right;">$${item.producto.precio.toFixed(2)}</td>
-                    <td style="padding: 10px; border-bottom: 1px solid #eee; text-align: right;">$${subtotal.toFixed(2)}</td>
-                </tr>
-            `
-        }).join('')
+            // Formato de línea estilo ticket
+            const cantStr = String(item.cantidad).padEnd(5, ' ')
+            const nombreStr = item.producto.nombre.padEnd(25, ' ')
+            const subtotalStr = `$${subtotal.toFixed(2)}`
+            return `${cantStr} ${nombreStr} ${subtotalStr}`
+        }).join('\n')
 
-        const fechaActual = new Date().toLocaleDateString('es-EC', {
+        const fechaActual = new Date().toLocaleString('es-EC', {
             year: 'numeric',
-            month: 'long',
-            day: 'numeric'
+            month: 'numeric',
+            day: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit',
+            second: '2-digit'
         })
 
         const ventanaImpresion = window.open('', '_blank')
@@ -108,55 +108,43 @@ export default function CatalogoPage() {
         ventanaImpresion.document.write(`
             <html>
                 <head>
-                    <title>Recibo de Pedido - JL Flow Store</title>
+                    <title>Comprobante de Compra - JL Flow Store</title>
                     <style>
-                        body { font-family: Arial, sans-serif; color: #333; padding: 30px; margin: 0; }
-                        .header { text-align: center; border-bottom: 2px solid #000; padding-bottom: 15px; margin-bottom: 25px; }
-                        .header h1 { margin: 0; font-size: 24px; color: #111; letter-spacing: 1px; }
-                        .header p { margin: 5px 0 0; font-size: 13px; color: #666; }
-                        .info { margin-bottom: 20px; font-size: 14px; }
-                        table { width: 100%; border-collapse: collapse; margin-bottom: 25px; font-size: 14px; }
-                        th { background-color: #f4f4f4; padding: 10px; text-align: left; border-bottom: 2px solid #ddd; }
-                        th:nth-child(2), th:nth-child(3), th:nth-child(4) { text-align: right; }
-                        td:nth-child(2) { text-align: center; }
-                        td:nth-child(3), td:nth-child(4) { text-align: right; }
-                        .total-section { text-align: right; font-size: 16px; font-weight: bold; margin-top: 15px; border-top: 2px solid #000; padding-top: 15px; }
-                        .footer { text-align: center; margin-top: 40px; font-size: 12px; color: #777; border-top: 1px solid #eee; padding-top: 15px; }
+                        body {
+                            font-family: 'Courier New', Courier, monospace;
+                            font-size: 14px;
+                            color: #000;
+                            padding: 20px;
+                            white-space: pre-wrap;
+                            line-height: 1.4;
+                        }
+                        .ticket-container {
+                            max-width: 400px;
+                            margin: 0 auto;
+                        }
                     </style>
                 </head>
                 <body>
-                    <div class="header">
-                        <h1>JL FLOW STORE</h1>
-                        <p>Streetwear, gorras y estilo urbano</p>
-                    </div>
-                    
-                    <div class="info">
-                        <p><strong>Fecha:</strong> ${fechaActual}</p>
-                        <p><strong>Comprobante de Pedido</strong></p>
-                    </div>
+                    <div class="ticket-container">
+========================================
+             JL FLOW STORE
+         COMPROBANTE DE COMPRA
+========================================
 
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Producto</th>
-                                <th>Cant.</th>
-                                <th>Precio Unit.</th>
-                                <th>Subtotal</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            ${itemsHtml}
-                        </tbody>
-                    </table>
+FECHA: ${fechaActual}
+CLIENTE: RONALD LEON
 
-                    <div class="total-section">
-                        Total a Pagar: $${total.toFixed(2)}
+----------------------------------------
+CANT.  PRODUCTO                   SUBTOTAL
+----------------------------------------
+${itemsTexto}
+----------------------------------------
+TOTAL A PAGAR: $${total.toFixed(2)}
+
+========================================
+        ¡GRACIAS POR SU COMPRA!
+========================================
                     </div>
-
-                    <div class="footer">
-                        <p>¡Gracias por tu compra en JL Flow Store! Quedamos atentos a tu confirmación por WhatsApp.</p>
-                    </div>
-
                     <script>
                         window.onload = function() {
                             window.print();
@@ -198,8 +186,8 @@ export default function CatalogoPage() {
                                 key={cat}
                                 onClick={() => setCategoriaSeleccionada(cat)}
                                 className={`px-5 py-2 rounded-xl text-sm font-semibold capitalize transition-all whitespace-nowrap ${categoriaSeleccionada === cat
-                                        ? 'bg-blue-600 text-white shadow-md'
-                                        : 'bg-[#1e293b] text-gray-300 hover:bg-gray-700'
+                                    ? 'bg-blue-600 text-white shadow-md'
+                                    : 'bg-[#1e293b] text-gray-300 hover:bg-gray-700'
                                     }`}
                             >
                                 {cat}
@@ -326,7 +314,7 @@ export default function CatalogoPage() {
                 </div>
             )}
 
-            {/* Barra Inferior Flotante (Estilo Original con Botón PDF y WhatsApp) */}
+            {/* Barra Inferior Flotante */}
             {carrito.length > 0 && (
                 <div className="fixed bottom-0 left-0 right-0 bg-[#151b2b] border-t border-gray-800 p-4 shadow-2xl z-40 flex flex-col sm:flex-row items-center justify-between gap-4 max-w-7xl mx-auto sm:rounded-t-2xl">
                     <div className="flex items-center gap-4 text-sm font-semibold">
