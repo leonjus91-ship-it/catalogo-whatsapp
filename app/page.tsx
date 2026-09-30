@@ -26,8 +26,8 @@ export default function CatalogoPage() {
     const [productoSeleccionado, setProductoSeleccionado] = useState<Producto | null>(null)
     const [carrito, setCarrito] = useState<{ producto: Producto; cantidad: number }[]>([])
 
-    // Estado para el nombre del cliente
-    const [nombreCliente, setNombreCliente] = useState<string>('RONALD LEON')
+    // Estado para el nombre del cliente (inicializado vacío para que muestre el placeholder)
+    const [nombreCliente, setNombreCliente] = useState<string>('')
 
     // Estado para detectar si estamos en entorno local
     const [esLocalhost, setEsLocalhost] = useState<boolean>(false)
@@ -76,7 +76,8 @@ export default function CatalogoPage() {
     const enviarPedidoWhatsApp = () => {
         if (carrito.length === 0) return
 
-        let mensaje = `¡Hola! 🧢 Me gustaría hacer el siguiente pedido en JL Flow Store (Cliente: ${nombreCliente || 'Cliente'}):\n\n`
+        const clienteFinal = nombreCliente.trim() !== '' ? nombreCliente : 'Cliente'
+        let mensaje = `¡Hola! 🧢 Me gustaría hacer el siguiente pedido en JL Flow Store (Cliente: ${clienteFinal}):\n\n`
         let total = 0
 
         carrito.forEach((item) => {
@@ -351,15 +352,15 @@ className = "w-full bg-blue-600 text-white py-3 rounded-xl font-bold hover:bg-bl
 
             <div className="flex flex-col sm:flex-row items-center justify-between gap-3 bg-black/40 p-2.5 rounded-xl border border-gray-800" >
                 <label className="text-xs font-semibold text-gray-300 whitespace-nowrap" >
-                            👤 Nombre en el Comprobante:
+                            👤 Nombre del Comprador:
     </label>
         < input
     type = "text"
     value = { nombreCliente }
     onChange = {(e) => setNombreCliente(e.target.value)
 }
-placeholder = "Ej. RONALD LEON"
-className = "w-full sm:w-64 px-3 py-1.5 bg-[#0b0f19] border border-gray-700 rounded-lg text-xs text-white focus:outline-none focus:ring-1 focus:ring-blue-600 font-mono uppercase"
+placeholder = "Escribe el nombre del comprador..."
+className = "w-full sm:w-72 px-3 py-1.5 bg-[#0b0f19] border border-gray-700 rounded-lg text-xs text-white focus:outline-none focus:ring-1 focus:ring-blue-600 font-mono uppercase"
     />
     </div>
 
