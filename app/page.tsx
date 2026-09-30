@@ -80,32 +80,34 @@ export default function CatalogoPage() {
     }
 
     return (
-        <main className="min-h-screen bg-gray-50 text-gray-900 pb-20">
-            {/* Header / Banner */}
-            <header className="bg-black text-white py-8 px-4 text-center shadow-md">
-                <h1 className="text-3xl font-extrabold tracking-wider uppercase">JL Flow Store</h1>
-                <p className="text-sm text-gray-400 mt-1">Streetwear, gorras y estilo urbano</p>
+        <main className="min-h-screen bg-gray-50 text-gray-900 pb-24">
+            {/* Header / Banner Principal */}
+            <header className="bg-black text-white py-10 px-4 text-center shadow-lg">
+                <h1 className="text-4xl font-black tracking-wider uppercase">JL Flow Store</h1>
+                <p className="text-sm text-gray-400 mt-1 font-medium">Streetwear, gorras y estilo urbano</p>
             </header>
 
-            <div className="max-w-6xl mx-auto px-4 mt-6">
-                {/* Barra de búsqueda y Filtros */}
-                <div className="flex flex-col md:flex-row gap-4 justify-between items-center mb-8">
+            {/* Contenedor principal centrado con ancho máximo controlado */}
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-8">
+
+                {/* Barra de búsqueda y Filtros ordenados */}
+                <div className="bg-white p-4 rounded-2xl shadow-sm border border-gray-100 mb-8 flex flex-col md:flex-row gap-4 justify-between items-center">
                     <input
                         type="text"
-                        placeholder="Buscar gorras, camisetas..."
+                        placeholder="🔍 Buscar gorras, camisetas..."
                         value={busqueda}
                         onChange={(e) => setBusqueda(e.target.value)}
-                        className="w-full md:w-80 px-4 py-2 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-black"
+                        className="w-full md:w-96 px-4 py-2.5 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-black text-sm bg-gray-50"
                     />
 
-                    <div className="flex gap-2 overflow-x-auto w-full md:w-auto pb-2">
+                    <div className="flex gap-2 overflow-x-auto w-full md:w-auto pb-1 md:pb-0 justify-start md:justify-end">
                         {['todos', 'gorras', 'camisetas'].map((cat) => (
                             <button
                                 key={cat}
                                 onClick={() => setCategoriaSeleccionada(cat)}
-                                className={`px-4 py-2 rounded-full text-sm font-medium capitalize transition-all ${categoriaSeleccionada === cat
-                                        ? 'bg-black text-white shadow'
-                                        : 'bg-white text-gray-700 border border-gray-200 hover:bg-gray-100'
+                                className={`px-5 py-2 rounded-xl text-sm font-semibold capitalize transition-all whitespace-nowrap ${categoriaSeleccionada === cat
+                                        ? 'bg-black text-white shadow-md'
+                                        : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                                     }`}
                             >
                                 {cat}
@@ -114,58 +116,58 @@ export default function CatalogoPage() {
                     </div>
                 </div>
 
-                {/* Grid de Productos */}
+                {/* Grid de Productos Equilibrado */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
                     {productosFiltrados.map((producto) => (
                         <div
                             key={producto.id}
-                            className="bg-white rounded-2xl shadow-sm hover:shadow-md transition-shadow border border-gray-100 overflow-hidden flex flex-col justify-between relative"
+                            className="bg-white rounded-2xl shadow-sm hover:shadow-xl transition-all duration-300 border border-gray-100 overflow-hidden flex flex-col justify-between relative group"
                         >
-                            {/* Etiqueta flotante de Oferta si tiene precio anterior */}
+                            {/* Etiqueta flotante de Oferta */}
                             {producto.precio_anterior && producto.precio_anterior > producto.precio && (
-                                <span className="absolute top-3 left-3 bg-red-600 text-white text-xs font-bold px-2.5 py-1 rounded-full uppercase tracking-wider shadow z-10">
+                                <span className="absolute top-3 left-3 bg-red-600 text-white text-xs font-bold px-2.5 py-1 rounded-full uppercase tracking-wider shadow-md z-10">
                                     Oferta
                                 </span>
                             )}
 
                             <div
-                                className="cursor-pointer relative h-56 bg-gray-100 overflow-hidden"
+                                className="cursor-pointer relative h-60 bg-gray-100 overflow-hidden"
                                 onClick={() => setProductoSeleccionado(producto)}
                             >
                                 <img
                                     src={producto.imagen_url}
                                     alt={producto.nombre}
-                                    className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
+                                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                                 />
                             </div>
 
                             <div className="p-4 flex flex-col flex-grow justify-between">
                                 <div>
                                     <h3
-                                        className="font-bold text-lg text-gray-900 cursor-pointer hover:underline"
+                                        className="font-bold text-base text-gray-900 cursor-pointer hover:text-gray-600 line-clamp-1 transition-colors"
                                         onClick={() => setProductoSeleccionado(producto)}
                                     >
                                         {producto.nombre}
                                     </h3>
-                                    <p className="text-gray-500 text-sm mt-1 line-clamp-2">
+                                    <p className="text-gray-500 text-xs mt-1 line-clamp-2">
                                         {producto.descripcion}
                                     </p>
                                 </div>
 
-                                <div className="mt-4 flex items-center justify-between">
+                                <div className="mt-4 pt-3 border-t border-gray-100 flex items-center justify-between">
                                     <div className="flex flex-col">
                                         {producto.precio_anterior && producto.precio_anterior > producto.precio && (
                                             <span className="text-xs text-gray-400 line-through">
                                                 ${producto.precio_anterior.toFixed(2)}
                                             </span>
                                         )}
-                                        <span className="text-xl font-bold text-gray-900">
+                                        <span className="text-lg font-black text-gray-900">
                                             ${producto.precio.toFixed(2)}
                                         </span>
                                     </div>
                                     <button
                                         onClick={() => agregarAlCarrito(producto)}
-                                        className="bg-black text-white px-4 py-2 rounded-xl text-sm font-semibold hover:bg-gray-800 transition-colors"
+                                        className="bg-black text-white px-4 py-2 rounded-xl text-xs font-bold hover:bg-gray-800 transition-colors shadow-sm"
                                     >
                                         Agregar
                                     </button>
@@ -176,10 +178,10 @@ export default function CatalogoPage() {
                 </div>
             </div>
 
-            {/* Modal de Detalle del Producto Ajustado */}
+            {/* Modal de Detalle Ajustado y Elegante */}
             {productoSeleccionado && (
-                <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center p-3 z-50">
-                    <div className="bg-white rounded-3xl max-w-md w-full max-h-[90vh] flex flex-col overflow-hidden shadow-2xl relative animate-in fade-in zoom-in duration-200">
+                <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+                    <div className="bg-white rounded-3xl max-w-md w-full max-h-[85vh] flex flex-col overflow-hidden shadow-2xl relative animate-in fade-in zoom-in duration-200">
                         <button
                             onClick={() => setProductoSeleccionado(null)}
                             className="absolute top-3 right-3 bg-black/60 hover:bg-black text-white rounded-full w-8 h-8 flex items-center justify-center font-bold z-20 transition-colors"
@@ -187,8 +189,7 @@ export default function CatalogoPage() {
                             ✕
                         </button>
 
-                        {/* Imagen ajustada con altura controlada */}
-                        <div className="h-48 sm:h-56 bg-gray-100 relative flex-shrink-0">
+                        <div className="h-56 bg-gray-100 relative flex-shrink-0">
                             {productoSeleccionado.precio_anterior && productoSeleccionado.precio_anterior > productoSeleccionado.precio && (
                                 <span className="absolute top-3 left-3 bg-red-600 text-white text-xs font-bold px-2.5 py-1 rounded-full uppercase tracking-wider shadow z-10">
                                     Oferta
@@ -201,12 +202,11 @@ export default function CatalogoPage() {
                             />
                         </div>
 
-                        {/* Contenido con scroll interno si es muy largo */}
                         <div className="p-5 overflow-y-auto flex-grow">
                             <h2 className="text-xl font-black text-gray-900 mb-1">
                                 {productoSeleccionado.nombre}
                             </h2>
-                            <div className="flex items-center gap-3 mb-3">
+                            <div className="flex items-center gap-3 mb-4">
                                 <span className="text-xl font-bold text-black">
                                     ${productoSeleccionado.precio.toFixed(2)}
                                 </span>
@@ -217,11 +217,10 @@ export default function CatalogoPage() {
                                 )}
                             </div>
 
-                            {/* Sección dinámica de especificaciones */}
-                            <div className="text-gray-700 text-xs sm:text-sm mb-4 bg-gray-50 p-3.5 rounded-xl border border-gray-100">
-                                <p className="font-bold text-gray-900 mb-1.5">Detalles del producto:</p>
+                            <div className="text-gray-700 text-xs sm:text-sm mb-5 bg-gray-50 p-4 rounded-2xl border border-gray-100">
+                                <p className="font-bold text-gray-900 mb-2">Detalles del producto:</p>
                                 {productoSeleccionado.especificaciones ? (
-                                    <ul className="space-y-1 list-disc list-inside text-gray-700">
+                                    <ul className="space-y-1.5 list-disc list-inside text-gray-700">
                                         {productoSeleccionado.especificaciones
                                             .split('\n')
                                             .map((spec: string, index: number) => (
@@ -238,7 +237,7 @@ export default function CatalogoPage() {
                                     agregarAlCarrito(productoSeleccionado)
                                     setProductoSeleccionado(null)
                                 }}
-                                className="w-full bg-black text-white py-3 rounded-xl font-bold hover:bg-gray-800 transition-colors text-sm"
+                                className="w-full bg-black text-white py-3 rounded-xl font-bold hover:bg-gray-800 transition-colors text-sm shadow-md"
                             >
                                 Añadir al Carrito
                             </button>
@@ -249,23 +248,23 @@ export default function CatalogoPage() {
 
             {/* Carrito Flotante / Botón de Pedido por WhatsApp */}
             {carrito.length > 0 && (
-                <div className="fixed bottom-6 right-6 bg-white border border-gray-200 shadow-2xl rounded-2xl p-4 max-w-sm w-full z-40">
+                <div className="fixed bottom-6 right-6 bg-white border border-gray-200 shadow-2xl rounded-2xl p-4 max-w-xs sm:max-w-sm w-full z-40">
                     <div className="flex justify-between items-center mb-3">
-                        <h4 className="font-bold text-gray-900">Tu Pedido ({carrito.reduce((acc, item) => acc + item.cantidad, 0)})</h4>
+                        <h4 className="font-bold text-gray-900 text-sm">Tu Pedido ({carrito.reduce((acc, item) => acc + item.cantidad, 0)})</h4>
                         <button
                             onClick={() => setCarrito([])}
-                            className="text-xs text-red-500 hover:underline"
+                            className="text-xs text-red-500 hover:underline font-medium"
                         >
                             Vaciar
                         </button>
                     </div>
                     <div className="max-h-36 overflow-y-auto space-y-2 mb-4 pr-1">
                         {carrito.map((item, idx) => (
-                            <div key={idx} className="flex justify-between text-sm text-gray-700">
-                                <span className="truncate pr-2">
+                            <div key={idx} className="flex justify-between text-xs text-gray-700">
+                                <span className="truncate pr-2 font-medium">
                                     {item.cantidad}x {item.producto.nombre}
                                 </span>
-                                <span className="font-semibold">
+                                <span className="font-bold">
                                     ${(item.producto.precio * item.cantidad).toFixed(2)}
                                 </span>
                             </div>
@@ -273,7 +272,7 @@ export default function CatalogoPage() {
                     </div>
                     <button
                         onClick={enviarPedidoWhatsApp}
-                        className="w-full bg-green-600 text-white py-3 rounded-xl font-bold hover:bg-green-700 transition-colors flex items-center justify-center gap-2 shadow-md"
+                        className="w-full bg-green-600 text-white py-2.5 rounded-xl font-bold hover:bg-green-700 transition-colors flex items-center justify-center gap-2 shadow-md text-sm"
                     >
                         Pedir por WhatsApp 📱
                     </button>
