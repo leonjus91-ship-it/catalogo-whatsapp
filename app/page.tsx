@@ -26,7 +26,7 @@ export default function CatalogoPage() {
     const [productoSeleccionado, setProductoSeleccionado] = useState<Producto | null>(null)
     const [carrito, setCarrito] = useState<{ producto: Producto; cantidad: number }[]>([])
 
-    // Estado para el nombre del cliente (puedes cambiar el valor por defecto si gustas)
+    // Estado para el nombre del cliente
     const [nombreCliente, setNombreCliente] = useState<string>('RONALD LEON')
 
     useEffect(() => {
@@ -89,9 +89,8 @@ export default function CatalogoPage() {
         let itemsTexto = carrito.map(item => {
             const subtotal = item.producto.precio * item.cantidad
             total += subtotal
-            // Formato de línea estilo ticket
-            const cantStr = String(item.cantidad).padEnd(5, ' ')
-            const nombreStr = item.producto.nombre.padEnd(25, ' ')
+            const cantStr = String(item.cantidad).padEnd(4, ' ')
+            const nombreStr = item.producto.nombre.padEnd(20, ' ')
             const subtotalStr = `$${subtotal.toFixed(2)}`
             return `${cantStr} ${nombreStr} ${subtotalStr}`
         }).join('\n')
@@ -115,17 +114,22 @@ export default function CatalogoPage() {
                 <head>
                     <title>Comprobante de Compra - JL Flow Store</title>
                     <style>
+                        @page {
+                            size: 80mm auto;
+                            margin: 0;
+                        }
                         body {
                             font-family: 'Courier New', Courier, monospace;
-                            font-size: 14px;
+                            font-size: 12px;
                             color: #000;
-                            padding: 20px;
+                            margin: 0;
+                            padding: 10px;
+                            width: 72mm;
                             white-space: pre-wrap;
-                            line-height: 1.4;
+                            line-height: 1.3;
                         }
                         .ticket-container {
-                            max-width: 400px;
-                            margin: 0 auto;
+                            width: 100%;
                         }
                     </style>
                 </head>
@@ -140,7 +144,7 @@ FECHA: ${fechaActual}
 CLIENTE: ${clienteFinal}
 
 ----------------------------------------
-CANT.  PRODUCTO                   SUBTOTAL
+CANT. PRODUCTO              SUBTOTAL
 ----------------------------------------
 ${itemsTexto}
 ----------------------------------------
@@ -201,14 +205,13 @@ TOTAL A PAGAR: $${total.toFixed(2)}
                     </div>
                 </div>
 
-                {/* Grid de Productos Estilo Original */}
+                {/* Grid de Productos */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
                     {productosFiltrados.map((producto) => (
                         <div
                             key={producto.id}
                             className="bg-white text-gray-900 rounded-2xl shadow-xl overflow-hidden flex flex-col justify-between relative group transition-transform duration-300 hover:-translate-y-1"
                         >
-                            {/* Etiqueta flotante de Oferta */}
                             {producto.precio_anterior && producto.precio_anterior > producto.precio && (
                                 <span className="absolute top-3 left-3 bg-red-600 text-white text-xs font-bold px-2.5 py-1 rounded-full uppercase tracking-wider shadow-md z-10">
                                     Oferta
@@ -323,7 +326,6 @@ TOTAL A PAGAR: $${total.toFixed(2)}
             {carrito.length > 0 && (
                 <div className="fixed bottom-0 left-0 right-0 bg-[#151b2b] border-t border-gray-800 p-4 shadow-2xl z-40 max-w-7xl mx-auto sm:rounded-t-2xl flex flex-col gap-3">
 
-                    {/* Fila superior: Input para cambiar el nombre del cliente en tiempo real */}
                     <div className="flex flex-col sm:flex-row items-center justify-between gap-3 bg-black/40 p-2.5 rounded-xl border border-gray-800">
                         <label className="text-xs font-semibold text-gray-300 whitespace-nowrap">
                             👤 Nombre en el Comprobante:
@@ -337,7 +339,6 @@ TOTAL A PAGAR: $${total.toFixed(2)}
                         />
                     </div>
 
-                    {/* Fila inferior: Totales y Botones de acción */}
                     <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
                         <div className="flex items-center gap-4 text-sm font-semibold w-full sm:w-auto justify-between sm:justify-start">
                             <span className="bg-black px-3 py-1.5 rounded-full text-white text-xs border border-gray-700">
