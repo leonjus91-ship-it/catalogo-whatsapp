@@ -23,7 +23,6 @@ export default function Home() {
     const [cargando, setCargando] = useState(true)
     const [carrito, setCarrito] = useState<Producto[]>([])
 
-    // Estado para la ventana de detalle del producto (modal)
     const [productoSeleccionado, setProductoSeleccionado] = useState<Producto | null>(null)
     const [cantidadModal, setCantidadModal] = useState(1)
 
@@ -84,7 +83,6 @@ export default function Home() {
     return (
         <main className="min-h-screen py-8 px-4 sm:px-6 lg:px-8 pb-32 bg-slate-950 bg-[radial-gradient(#1e293b_1px,transparent_1px)] [background-size:24px_24px]">
             <div className="max-w-7xl mx-auto">
-                {/* Logo y Título de la Tienda */}
                 <div className="text-center mb-8 flex flex-col items-center">
                     <img
                         src="/logo-jl.jpg"
@@ -99,7 +97,6 @@ export default function Home() {
                     </p>
                 </div>
 
-                {/* Barra de Búsqueda */}
                 <div className="max-w-md mx-auto mb-4">
                     <input
                         type="text"
@@ -110,7 +107,6 @@ export default function Home() {
                     />
                 </div>
 
-                {/* Botones de Filtro por Categoría */}
                 <div className="flex justify-center gap-3 mb-8">
                     <button
                         onClick={() => setCategoriaSeleccionada('todos')}
@@ -141,12 +137,10 @@ export default function Home() {
                     </button>
                 </div>
 
-                {/* Mensaje de carga */}
                 {cargando && (
                     <div className="text-center py-12 text-gray-400">Cargando productos...</div>
                 )}
 
-                {/* Cuadrícula de Productos */}
                 {!cargando && (
                     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
                         {productosFiltrados.map((producto) => (
@@ -186,7 +180,6 @@ export default function Home() {
                     </div>
                 )}
 
-                {/* Si no hay resultados */}
                 {!cargando && productosFiltrados.length === 0 && (
                     <div className="text-center py-12 text-gray-400">
                         No se encontraron productos con esos filtros.
@@ -205,31 +198,34 @@ export default function Home() {
                             ×
                         </button>
 
-                        {/* Imagen grande del producto */}
                         <div className="w-full md:w-1/2 h-72 md:h-auto bg-gray-100 rounded-2xl overflow-hidden">
                             <img src={productoSeleccionado.imagen_url} alt={productoSeleccionado.nombre} className="w-full h-full object-cover" />
                         </div>
 
-                        {/* Información y especificaciones */}
                         <div className="w-full md:w-1/2 flex flex-col justify-between">
                             <div>
                                 <span className="bg-red-100 text-red-600 text-xs font-bold px-2.5 py-1 rounded-md uppercase">¡Oferta!</span>
                                 <h2 className="text-2xl font-black text-gray-900 mt-2 mb-2">{productoSeleccionado.nombre}</h2>
 
-                                {/* Precios con oferta (Antes tachado y Ahora destacado) */}
                                 <div className="flex items-center gap-3 mb-4">
                                     <span className="text-lg text-gray-400 line-through">$45</span>
                                     <span className="text-2xl font-black text-gray-900">${productoSeleccionado.precio}</span>
                                 </div>
 
-                                <div className="text-gray-600 text-sm space-y-2 mb-6 bg-gray-50 p-4 rounded-xl border border-gray-100">
-                                    <p className="font-semibold text-gray-800">Detalles del producto:</p>
-                                    <p>{productoSeleccionado.descripcion}</p>
+                                <div className="text-gray-700 text-sm mb-6 bg-gray-50 p-4 rounded-xl border border-gray-100">
+                                    <p className="font-bold text-gray-900 mb-2">Detalles del producto:</p>
+                                    {/* Lista con viñetas profesional */}
+                                    <ul className="space-y-1.5 list-disc list-inside text-gray-700">
+                                        <li>Gorra snapback estructurada con construcción premium de 5 paneles</li>
+                                        <li>Bordado 3D metalizado con tipografía gótica de alta densidad</li>
+                                        <li>Gráfico frontal sublimado con diseño inspirado en el cine de terror</li>
+                                        <li>Broche de presión ajustable para un calce personalizado y seguro</li>
+                                        <li>Detalle superior metálico que añade un acabado industrial único</li>
+                                    </ul>
                                 </div>
                             </div>
 
                             <div className="space-y-4">
-                                {/* Selector de cantidad */}
                                 <div className="flex items-center gap-4">
                                     <div className="flex items-center border border-gray-300 rounded-xl overflow-hidden">
                                         <button
@@ -244,7 +240,6 @@ export default function Home() {
                                     </div>
                                 </div>
 
-                                {/* Botón de añadir al carrito */}
                                 <button
                                     onClick={() => agregarAlCarritoConCantidad(productoSeleccionado, cantidadModal)}
                                     className="w-full bg-black hover:bg-gray-800 text-white font-bold py-3.5 px-6 rounded-xl transition shadow-lg text-center"
@@ -257,7 +252,6 @@ export default function Home() {
                 </div>
             )}
 
-            {/* Barra flotante inferior del Carrito */}
             {carrito.length > 0 && (
                 <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 shadow-2xl p-4 z-40">
                     <div className="max-w-4xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
