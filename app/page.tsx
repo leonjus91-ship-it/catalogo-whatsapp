@@ -107,7 +107,7 @@ export default function CatalogoPage() {
 
         mensaje += `\n*Total a pagar: $${total.toFixed(2)}*\n\n¡Quedo atento para coordinar el pago y envío!`
 
-        const numeroWhatsApp = '593999999999' // Reemplaza con tu número de WhatsApp real
+        const numeroWhatsApp = '593996926920' // Número configurado para JL Flow Store
         const urlWhatsApp = `https://wa.me/${numeroWhatsApp}?text=${encodeURIComponent(mensaje)}`
         window.open(urlWhatsApp, '_blank')
     }
@@ -364,7 +364,7 @@ className = "w-full bg-blue-600 text-white py-3 rounded-xl font-bold hover:bg-bl
         </div>
             )}
 
-{/* Modal de Visualización del Carrito (Se abre al hacer clic en el botón de productos) */ }
+{/* Modal de Visualización del Carrito */ }
 {
     mostrarCarritoModal && (
         <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 z-50" >
@@ -430,9 +430,8 @@ className = "w-full sm:w-72 px-3 py-1.5 bg-[#0b0f19] border border-gray-700 roun
 
     < div className = "flex flex-col sm:flex-row items-center justify-between gap-4" >
         <div className="flex items-center gap-4 text-sm font-semibold w-full sm:w-auto justify-between sm:justify-start" >
-        {/* Al hacer clic en este botón, ahora se abre la ventana flotante con los productos */ }
-            < button
-onClick = {() => setMostrarCarritoModal(true)}
+            <button
+                                onClick={ () => setMostrarCarritoModal(true) }
 className = "bg-black hover:bg-gray-900 px-4 py-2 rounded-full text-white text-xs border border-gray-700 flex items-center gap-2 transition-all cursor-pointer shadow-md"
     >
                                 🛒 <span className="underline font-bold" > { totalProductosCarrito } producto{ totalProductosCarrito > 1 ? 's' : '' } (Ver carrito)</span>
