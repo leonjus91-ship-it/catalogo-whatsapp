@@ -26,7 +26,10 @@ export default function CatalogoPage() {
     const [productoSeleccionado, setProductoSeleccionado] = useState<Producto | null>(null)
     const [carrito, setCarrito] = useState<{ producto: Producto; cantidad: number }[]>([])
 
-    // Estado para el nombre del cliente (inicializado vacío para que muestre el placeholder)
+    // Estado para controlar la visibilidad del modal del carrito
+    const [mostrarCarritoModal, setMostrarCarritoModal] = useState<boolean>(false)
+
+    // Estado para el nombre del comprador
     const [nombreCliente, setNombreCliente] = useState<string>('')
 
     // Estado para detectar si estamos en entorno local
@@ -73,11 +76,27 @@ export default function CatalogoPage() {
         })
     }
 
+    const cambiarCantidad = (id: number, delta: number) => {
+        setCarrito((prevCarrito) => {
+            return prevCarrito.map((item) => {
+                if (item.producto.id === id) {
+                    const nuevaCantidad = item.cantidad + delta
+                    return nuevaCantidad > 0 ? { ...item, cantidad: nuevaCantidad } : null
+                }
+                return item
+            }).filter(Boolean) as { producto: Producto; cantidad: number }[]
+        })
+    }
+
+    const eliminarDelCarrito = (id: number) => {
+        setCarrito((prevCarrito) => prevCarrito.filter((item) => item.producto.id !== id))
+    }
+
     const enviarPedidoWhatsApp = () => {
         if (carrito.length === 0) return
 
         const clienteFinal = nombreCliente.trim() !== '' ? nombreCliente : 'Cliente'
-        let mensaje = `¡Hola! 🧢 Me gustaría hacer el siguiente pedido en JL Flow Store (Cliente: ${clienteFinal}):\n\n`
+        let mensaje = `¡Hola! 🧢 Me gustaría hacer el siguiente pedido en JL Flow Store (Comprador: ${clienteFinal}):\n\n`
         let total = 0
 
         carrito.forEach((item) => {
@@ -283,7 +302,7 @@ className = "w-full bg-blue-600 text-white py-2.5 rounded-xl text-xs font-bold h
 </div>
     </div>
 
-{/* Modal de Detalle */ }
+{/* Modal de Detalle de Producto */ }
 {
     productoSeleccionado && (
         <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 z-50" >
@@ -345,6 +364,51 @@ className = "w-full bg-blue-600 text-white py-3 rounded-xl font-bold hover:bg-bl
         </div>
             )}
 
+{/* Modal de Visualización del Carrito (Se abre al hacer clic en el botón de productos) */ }
+{
+    mostrarCarritoModal && (
+        <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 z-50" >
+            <div className="bg-[#151b2b] text-white rounded-3xl max-w-lg w-full max-h-[85vh] flex flex-col overflow-hidden shadow-2xl relative border border-gray-800" >
+                <div className="p-4 border-b border-gray-800 flex justify-between items-center bg-black/40" >
+                    <h2 className="text-lg font-black uppercase tracking-wider" >🛒 Productos en tu Carrito </h2>
+                        < button
+    onClick = {() => setMostrarCarritoModal(false)
+}
+className = "bg-gray-800 hover:bg-gray-700 text-white rounded-full w-8 h-8 flex items-center justify-center font-bold transition-colors"
+    >
+                                ✕
+</button>
+    </div>
+
+    < div className = "p-4 overflow-y-auto flex-grow space-y-3" >
+    {
+        carrito.map((item) => (
+            <div key= { item.producto.id } className = "flex items-center justify-between bg-black/30 p-3 rounded-2xl border border-gray-800 gap-3" >
+            <img src={ item.producto.imagen_url } alt = { item.producto.nombre } className = "w-14 h-14 object-cover rounded-xl flex-shrink-0" />
+            <div className="flex-grow min-w-0" >
+        <h4 className="font-bold text-sm truncate" > { item.producto.nombre } </h4>
+        < p className = "text-blue-400 text-xs font-semibold" > ${ item.producto.precio.toFixed(2) } c / u </p>
+        </div>
+        < div className = "flex items-center gap-2 bg-[#0b0f19] px-2.5 py-1 rounded-xl border border-gray-700" >
+        <button onClick={() => cambiarCantidad(item.producto.id, -1)} className = "text-gray-400 hover:text-white font-bold px-1" > -</button>
+            < span className = "text-xs font-bold w-4 text-center" > { item.cantidad } </span>
+                < button onClick = {() => cambiarCantidad(item.producto.id, 1)} className = "text-gray-400 hover:text-white font-bold px-1" > +</button>
+                    </div>
+                    < button onClick = {() => eliminarDelCarrito(item.producto.id)} className = "text-red-400 hover:text-red-300 p-1 text-sm" title = "Eliminar" >
+                                        🗑️
+</button>
+    </div>
+                            ))}
+</div>
+
+    < div className = "p-4 border-t border-gray-800 bg-black/40 flex justify-between items-center" >
+        <span className="text-sm font-medium text-gray-300" > Total a pagar: </span>
+            < span className = "text-xl font-black text-blue-400" > ${ precioTotalCarrito.toFixed(2) } </span>
+                </div>
+                </div>
+                </div>
+            )}
+
 {/* Barra Inferior Flotante */ }
 {
     carrito.length > 0 && (
@@ -359,16 +423,20 @@ className = "w-full bg-blue-600 text-white py-3 rounded-xl font-bold hover:bg-bl
     value = { nombreCliente }
     onChange = {(e) => setNombreCliente(e.target.value)
 }
-placeholder = "Escribe el nombre del comprador..."
+placeholder = "ESCRIBE EL NOMBRE DEL COMPRADOR..."
 className = "w-full sm:w-72 px-3 py-1.5 bg-[#0b0f19] border border-gray-700 rounded-lg text-xs text-white focus:outline-none focus:ring-1 focus:ring-blue-600 font-mono uppercase"
     />
     </div>
 
     < div className = "flex flex-col sm:flex-row items-center justify-between gap-4" >
         <div className="flex items-center gap-4 text-sm font-semibold w-full sm:w-auto justify-between sm:justify-start" >
-            <span className="bg-black px-3 py-1.5 rounded-full text-white text-xs border border-gray-700" >
-            { totalProductosCarrito } producto{ totalProductosCarrito > 1 ? 's' : '' }
-</span>
+        {/* Al hacer clic en este botón, ahora se abre la ventana flotante con los productos */ }
+            < button
+onClick = {() => setMostrarCarritoModal(true)}
+className = "bg-black hover:bg-gray-900 px-4 py-2 rounded-full text-white text-xs border border-gray-700 flex items-center gap-2 transition-all cursor-pointer shadow-md"
+    >
+                                🛒 <span className="underline font-bold" > { totalProductosCarrito } producto{ totalProductosCarrito > 1 ? 's' : '' } (Ver carrito)</span>
+    </button>
     < span > Total: <strong className="text-blue-400" > ${ precioTotalCarrito.toFixed(2) } </strong></span >
         </div>
 
