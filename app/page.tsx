@@ -163,7 +163,7 @@ export default function CatalogoPage() {
                 <body>
 ========================================
              JL FLOW STORE
-            CATALOGO DE ROPA
+          COMPROBANTE DE COMPRA
 ========================================
 
 FECHA: ${fechaActual}
@@ -431,28 +431,4 @@ className = "bg-black hover:bg-gray-900 px-4 py-2 rounded-full text-white text-x
     >
                                 🛒 <span className="underline font-bold" > { totalProductosCarrito } producto{ totalProductosCarrito > 1 ? 's' : '' } (Ver carrito)</span>
     </button>
-    < span > Total: <strong className="text-blue-400" > ${ precioTotalCarrito.toFixed(2) } </strong></span >
-        </div>
-
-        < div className = "flex items-center gap-3 w-full sm:w-auto" >
-        { esLocalhost && (
-                <button
-                                    onClick={ descargarReciboPDF }
-className = "flex-1 sm:flex-none bg-[#1e293b] hover:bg-gray-700 text-white px-5 py-2.5 rounded-xl font-bold text-sm transition-colors border border-gray-700 shadow-sm"
-    >
-    Descargar Comprobante PDF
-        </button>
-                            )}
-<button
-                                onClick={ enviarPedidoWhatsApp }
-className = "flex-1 sm:flex-none bg-green-600 hover:bg-green-700 text-white px-6 py-2.5 rounded-xl font-bold text-sm transition-colors shadow-md flex items-center justify-center gap-2"
-    >
-    Enviar pedido por WhatsApp
-        </button>
-        </div>
-        </div>
-        </div>
-            )}
-</main>
-    )
-}
+    < span > Total: <strong className="text-blue
