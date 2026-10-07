@@ -119,9 +119,9 @@ export default function CatalogoPage() {
         let itemsTexto = carrito.map(item => {
             const subtotal = item.producto.precio * item.cantidad
             total += subtotal
-            const cantStr = String(item.cantidad).padEnd(4, ' ')
+            const cantStr = String(item.cantidad).padEnd(3, ' ')
             const nombreStr = item.producto.nombre.padEnd(20, ' ')
-            const subtotalStr = `$${subtotal.toFixed(2)}`
+            const subtotalStr = `$${subtotal.toFixed(2)}`.padStart(8, ' ')
             return `${cantStr} ${nombreStr} ${subtotalStr}`
         }).join('\n')
 
@@ -145,26 +145,27 @@ export default function CatalogoPage() {
                     <title>Comprobante de Compra - JL Flow Store</title>
                     <style>
                         @page {
-                            size: 80mm auto;
-                            margin: 0mm;
+                            size: 80mm 297mm;
+                            margin: 0;
+                        }
+                        @media print {
+                            body {
+                                width: 80mm;
+                            }
                         }
                         body {
                             font-family: 'Courier New', Courier, monospace;
                             font-size: 11px;
                             color: #000;
                             margin: 0;
-                            padding: 2mm;
-                            width: 76mm;
+                            padding: 4mm;
+                            width: 72mm;
                             white-space: pre-wrap;
                             line-height: 1.2;
-                        }
-                        .ticket-container {
-                            width: 100%;
                         }
                     </style>
                 </head>
                 <body>
-                    <div class="ticket-container">
 ========================================
              JL FLOW STORE
         COMPROBANTE DE COMPRA
@@ -174,7 +175,7 @@ FECHA: ${fechaActual}
 CLIENTE: ${clienteFinal}
 
 ----------------------------------------
-CANT. PRODUCTO              SUBTOTAL
+CANT PRODUCTO               SUBTOTAL
 ----------------------------------------
 ${itemsTexto}
 ----------------------------------------
@@ -183,7 +184,6 @@ TOTAL A PAGAR: $${total.toFixed(2)}
 ========================================
         ¡GRACIAS POR SU COMPRA!
 ========================================
-                    </div>
                     <script>
                         window.onload = function() {
                             window.print();
