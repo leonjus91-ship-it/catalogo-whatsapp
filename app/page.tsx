@@ -119,7 +119,7 @@ export default function CatalogoPage() {
         let itemsTexto = carrito.map(item => {
             const subtotal = item.producto.precio * item.cantidad
             total += subtotal
-            const cantStr = String(item.cantidad).padEnd(3, ' ')
+            const cantStr = String(item.cantidad).padEnd(4, ' ')
             const nombreStr = item.producto.nombre.padEnd(20, ' ')
             const subtotalStr = `$${subtotal.toFixed(2)}`.padStart(8, ' ')
             return `${cantStr} ${nombreStr} ${subtotalStr}`
@@ -136,7 +136,7 @@ export default function CatalogoPage() {
 
         const clienteFinal = nombreCliente.trim() !== '' ? nombreCliente.toUpperCase() : 'CLIENTE GENERAL'
 
-        const ventanaImpresion = window.open('', '_blank')
+        const ventanaImpresion = window.open('', '_blank', 'width=350,height=600')
         if (!ventanaImpresion) return
 
         ventanaImpresion.document.write(`
@@ -145,21 +145,16 @@ export default function CatalogoPage() {
                     <title>Comprobante de Compra - JL Flow Store</title>
                     <style>
                         @page {
-                            size: 80mm 297mm;
-                            margin: 0;
-                        }
-                        @media print {
-                            body {
-                                width: 80mm;
-                            }
+                            size: 80mm auto;
+                            margin: 0mm;
                         }
                         body {
                             font-family: 'Courier New', Courier, monospace;
                             font-size: 11px;
                             color: #000;
                             margin: 0;
-                            padding: 4mm;
-                            width: 72mm;
+                            padding: 3mm;
+                            width: 74mm;
                             white-space: pre-wrap;
                             line-height: 1.2;
                         }
@@ -168,14 +163,14 @@ export default function CatalogoPage() {
                 <body>
 ========================================
              JL FLOW STORE
-        COMPROBANTE DE COMPRA
+            CATALOGO DE ROPA
 ========================================
 
 FECHA: ${fechaActual}
 CLIENTE: ${clienteFinal}
 
 ----------------------------------------
-CANT PRODUCTO               SUBTOTAL
+CANT.   PRODUCTO            SUBTOTAL
 ----------------------------------------
 ${itemsTexto}
 ----------------------------------------
