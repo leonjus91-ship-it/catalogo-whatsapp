@@ -29,7 +29,8 @@ export default function CatalogoPage() {
     // Estado para controlar la visibilidad del modal del carrito
     const [mostrarCarritoModal, setMostrarCarritoModal] = useState<boolean>(false)
 
-    // Estado para el nombre del comprador
+    // Estados para cédula y nombre del comprador
+    const [cedulaCliente, setCedulaCliente] = useState<string>('')
     const [nombreCliente, setNombreCliente] = useState<string>('')
 
     // Estado para detectar si estamos en entorno local
@@ -53,6 +54,32 @@ export default function CatalogoPage() {
         } else if (data) {
             setProductos(data)
         }
+    }
+
+    // Buscar cliente en Supabase al escribir la cédula
+    const buscarClientePorCedula = async (cedula: string) => {
+        setCedulaCliente(cedula)
+        if (cedula.trim().length >= 5) {
+            const { data, error } = await supabase
+                .from('clientes')
+                .select('nombre')
+                .eq('cedula', cedula.trim())
+                .single()
+
+            if (data && data.nombre) {
+                setNombreCliente(data.nombre)
+            }
+        }
+    }
+
+    // Guardar o actualizar cliente en Supabase
+    const guardarClienteSupabase = async (cedula: string, nombre: string) => {
+        if (!cedula.trim() || !nombre.trim()) return
+
+        await supabase.from('clientes').upsert(
+            { cedula: cedula.trim(), nombre: nombre.trim().toUpperCase() },
+            { onConflict: 'cedula' }
+        )
     }
 
     // Filtrar productos por categoría y barra de búsqueda
@@ -92,11 +119,17 @@ export default function CatalogoPage() {
         setCarrito((prevCarrito) => prevCarrito.filter((item) => item.producto.id !== id))
     }
 
-    const enviarPedidoWhatsApp = () => {
+    const enviarPedidoWhatsApp = async () => {
         if (carrito.length === 0) return
 
+        const cedulaFinal = cedulaCliente.trim() !== '' ? cedulaCliente : 'N/A'
         const clienteFinal = nombreCliente.trim() !== '' ? nombreCliente : 'Cliente'
-        let mensaje = `¡Hola! 🧢 Me gustaría hacer el siguiente pedido en JL Flow Store (Comprador: ${clienteFinal}):\n\n`
+
+        await guardarClienteSupabase(cedulaFinal, clienteFinal)
+
+        let mensaje = `¡Hola! 🧢 Me gustaría hacer el siguiente pedido en JL Flow Store:\n`
+        mensaje += `Cédula: ${cedulaFinal}\n`
+        mensaje += `Comprador: ${clienteFinal}\n\n`
         let total = 0
 
         carrito.forEach((item) => {
@@ -112,8 +145,13 @@ export default function CatalogoPage() {
         window.open(urlWhatsApp, '_blank')
     }
 
-    const descargarReciboPDF = () => {
+    const descargarReciboPDF = async () => {
         if (carrito.length === 0) return
+
+        const cedulaFinal = cedulaCliente.trim() !== '' ? cedulaCliente : 'N/A'
+        const clienteFinal = nombreCliente.trim() !== '' ? nombreCliente.toUpperCase() : 'CLIENTE GENERAL'
+
+        await guardarClienteSupabase(cedulaFinal, clienteFinal)
 
         let total = 0
         let itemsTexto = carrito.map(item => {
@@ -133,8 +171,6 @@ export default function CatalogoPage() {
             minute: '2-digit',
             second: '2-digit'
         })
-
-        const clienteFinal = nombreCliente.trim() !== '' ? nombreCliente.toUpperCase() : 'CLIENTE GENERAL'
 
         const ventanaImpresion = window.open('', '_blank', 'width=350,height=600')
         if (!ventanaImpresion) return
@@ -167,6 +203,7 @@ export default function CatalogoPage() {
 ========================================
 
 FECHA: ${fechaActual}
+CEDULA: ${cedulaFinal}
 CLIENTE: ${clienteFinal}
 
 ----------------------------------------
@@ -409,18 +446,32 @@ className = "bg-gray-800 hover:bg-gray-700 text-white rounded-full w-8 h-8 flex 
     carrito.length > 0 && (
         <div className="fixed bottom-0 left-0 right-0 bg-[#151b2b] border-t border-gray-800 p-4 shadow-2xl z-40 max-w-7xl mx-auto sm:rounded-t-2xl flex flex-col gap-3" >
 
-            <div className="flex flex-col sm:flex-row items-center justify-between gap-3 bg-black/40 p-2.5 rounded-xl border border-gray-800" >
-                <label className="text-xs font-semibold text-gray-300 whitespace-nowrap" >
-                            👤 Nombre del Comprador:
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 bg-black/40 p-2.5 rounded-xl border border-gray-800" >
+                <div className="flex items-center gap-2" >
+                    <label className="text-xs font-semibold text-gray-300 whitespace-nowrap" >
+                                🆔 Cédula:
     </label>
         < input
     type = "text"
-    value = { nombreCliente }
-    onChange = {(e) => setNombreCliente(e.target.value)
+    value = { cedulaCliente }
+    onChange = {(e) => buscarClientePorCedula(e.target.value)
 }
-placeholder = "ESCRIBE EL NOMBRE DEL COMPRADOR..."
-className = "w-full sm:w-72 px-3 py-1.5 bg-[#0b0f19] border border-gray-700 rounded-lg text-xs text-white focus:outline-none focus:ring-1 focus:ring-blue-600 font-mono uppercase"
+placeholder = "NÚMERO DE CÉDULA..."
+className = "w-full px-3 py-1.5 bg-[#0b0f19] border border-gray-700 rounded-lg text-xs text-white focus:outline-none focus:ring-1 focus:ring-blue-600 font-mono"
     />
+    </div>
+    < div className = "flex items-center gap-2" >
+        <label className="text-xs font-semibold text-gray-300 whitespace-nowrap" >
+                                👤 Nombre:
+</label>
+    < input
+type = "text"
+value = { nombreCliente }
+onChange = {(e) => setNombreCliente(e.target.value)}
+placeholder = "NOMBRE DEL COMPRADOR..."
+className = "w-full px-3 py-1.5 bg-[#0b0f19] border border-gray-700 rounded-lg text-xs text-white focus:outline-none focus:ring-1 focus:ring-blue-600 font-mono uppercase"
+    />
+    </div>
     </div>
 
     < div className = "flex flex-col sm:flex-row items-center justify-between gap-4" >
