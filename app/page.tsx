@@ -56,19 +56,29 @@ export default function CatalogoPage() {
         }
     }
 
-    // Buscar cliente en Supabase al escribir la cédula
-    const buscarClientePorCedula = async (cedula: string) => {
-        setCedulaCliente(cedula)
-        if (cedula.trim().length >= 5) {
-            const { data, error } = await supabase
-                .from('clientes')
-                .select('nombre')
-                .eq('cedula', cedula.trim())
-                .single()
+    // Función auxiliar para consultar el cliente en Supabase y retornar su nombre si existe
+    const obtenerNombrePorCedula = async (cedula: string): Promise<string | null> => {
+        if (!cedula.trim() || cedula.trim().length < 5) return null
+        const { data, error } = await supabase
+            .from('clientes')
+            .select('nombre')
+            .eq('cedula', cedula.trim())
+            .single()
 
-            if (data && data.nombre) {
-                setNombreCliente(data.nombre)
-            }
+        if (data && data.nombre) {
+            return data.nombre
+        }
+        return null
+    }
+
+    // Buscar cliente en Supabase al escribir la cédula
+    const manejarCambioCedula = async (e: React.ChangeEvent<HTMLInputElement>) => {
+        const cedula = e.target.value
+        setCedulaCliente(cedula)
+
+        const nombreEncontrado = await obtenerNombrePorCedula(cedula)
+        if (nombreEncontrado) {
+            setNombreCliente(nombreEncontrado)
         }
     }
 
@@ -123,13 +133,20 @@ export default function CatalogoPage() {
         if (carrito.length === 0) return
 
         const cedulaFinal = cedulaCliente.trim() !== '' ? cedulaCliente : 'N/A'
-        const clienteFinal = nombreCliente.trim() !== '' ? nombreCliente : 'Cliente'
 
-        await guardarClienteSupabase(cedulaFinal, clienteFinal)
+        // Verificamos de forma síncrona si hay un nombre registrado para esta cédula antes de enviar
+        let nombreFinal = nombreCliente.trim()
+        if (nombreFinal === '' && cedulaFinal !== 'N/A') {
+            const registrado = await obtenerNombrePorCedula(cedulaFinal)
+            if (registrado) nombreFinal = registrado
+        }
+        if (nombreFinal === '') nombreFinal = 'Cliente'
+
+        await guardarClienteSupabase(cedulaFinal, nombreFinal)
 
         let mensaje = `¡Hola! 🧢 Me gustaría hacer el siguiente pedido en JL Flow Store:\n`
         mensaje += `Cédula: ${cedulaFinal}\n`
-        mensaje += `Comprador: ${clienteFinal}\n\n`
+        mensaje += `Comprador: ${nombreFinal}\n\n`
         let total = 0
 
         carrito.forEach((item) => {
@@ -149,7 +166,14 @@ export default function CatalogoPage() {
         if (carrito.length === 0) return
 
         const cedulaFinal = cedulaCliente.trim() !== '' ? cedulaCliente : 'N/A'
-        const clienteFinal = nombreCliente.trim() !== '' ? nombreCliente.toUpperCase() : 'CLIENTE GENERAL'
+
+        // Verificamos de forma síncrona si hay un nombre registrado para esta cédula antes de imprimir
+        let nombreFinal = nombreCliente.trim()
+        if (nombreFinal === '' && cedulaFinal !== 'N/A') {
+            const registrado = await obtenerNombrePorCedula(cedulaFinal)
+            if (registrado) nombreFinal = registrado
+        }
+        const clienteFinal = nombreFinal !== '' ? nombreFinal.toUpperCase() : 'CLIENTE GENERAL'
 
         await guardarClienteSupabase(cedulaFinal, clienteFinal)
 
@@ -454,20 +478,20 @@ className = "bg-gray-800 hover:bg-gray-700 text-white rounded-full w-8 h-8 flex 
         < input
     type = "text"
     value = { cedulaCliente }
-    onChange = {(e) => buscarClientePorCedula(e.target.value)
-}
-placeholder = "NÚMERO DE CÉDULA..."
-className = "w-full px-3 py-1.5 bg-[#0b0f19] border border-gray-700 rounded-lg text-xs text-white focus:outline-none focus:ring-1 focus:ring-blue-600 font-mono"
-    />
-    </div>
-    < div className = "flex items-center gap-2" >
-        <label className="text-xs font-semibold text-gray-300 whitespace-nowrap" >
+    onChange = { manejarCambioCedula }
+    placeholder = "NÚMERO DE CÉDULA..."
+    className = "w-full px-3 py-1.5 bg-[#0b0f19] border border-gray-700 rounded-lg text-xs text-white focus:outline-none focus:ring-1 focus:ring-blue-600 font-mono"
+        />
+        </div>
+        < div className = "flex items-center gap-2" >
+            <label className="text-xs font-semibold text-gray-300 whitespace-nowrap" >
                                 👤 Nombre:
-</label>
-    < input
-type = "text"
-value = { nombreCliente }
-onChange = {(e) => setNombreCliente(e.target.value)}
+    </label>
+        < input
+    type = "text"
+    value = { nombreCliente }
+    onChange = {(e) => setNombreCliente(e.target.value)
+}
 placeholder = "NOMBRE DEL COMPRADOR..."
 className = "w-full px-3 py-1.5 bg-[#0b0f19] border border-gray-700 rounded-lg text-xs text-white focus:outline-none focus:ring-1 focus:ring-blue-600 font-mono uppercase"
     />
