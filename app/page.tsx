@@ -30,7 +30,7 @@ export default function CatalogoPage() {
     const [mostrarCarritoModal, setMostrarCarritoModal] = useState<boolean>(false)
     const [cedulaCliente, setCedulaCliente] = useState<string>('')
     const [nombreCliente, setNombreCliente] = useState<string>('')
-    const [clienteFrecuente, setClienteFrecuente] = useState<boolean>(false) // Estado para detectar si ya existía
+    const [clienteFrecuente, setClienteFrecuente] = useState<boolean>(false)
     const [esLocalhost, setEsLocalhost] = useState<boolean>(false)
 
     useEffect(() => {
@@ -73,8 +73,8 @@ export default function CatalogoPage() {
         if (cedula.trim().length >= 5) {
             const nombreEncontrado = await obtenerNombrePorCedula(cedula)
             if (nombreEncontrado) {
-                setNombreCliente(nombreEncontrado)
-                setClienteFrecuente(true) // Activamos el aviso de cliente frecuente
+                setNombreCliente(nombreEncontrado) // Rellena el nombre automáticamente
+                setClienteFrecuente(true)
             } else {
                 setClienteFrecuente(false)
             }
