@@ -17,7 +17,7 @@ interface Producto {
     imagen_url: string
     categoria?: string
     especificaciones?: string
-    stock?: number // Opcional: si no existe en la BD, por defecto asumiremos que hay stock
+    stock?: number
 }
 
 export default function CatalogoPage() {
@@ -30,6 +30,7 @@ export default function CatalogoPage() {
     const [mostrarCarritoModal, setMostrarCarritoModal] = useState<boolean>(false)
     const [cedulaCliente, setCedulaCliente] = useState<string>('')
     const [nombreCliente, setNombreCliente] = useState<string>('')
+    const [clienteFrecuente, setClienteFrecuente] = useState<boolean>(false) // Estado para detectar si ya existía
     const [esLocalhost, setEsLocalhost] = useState<boolean>(false)
 
     useEffect(() => {
@@ -69,9 +70,16 @@ export default function CatalogoPage() {
         const cedula = e.target.value
         setCedulaCliente(cedula)
 
-        const nombreEncontrado = await obtenerNombrePorCedula(cedula)
-        if (nombreEncontrado) {
-            setNombreCliente(nombreEncontrado)
+        if (cedula.trim().length >= 5) {
+            const nombreEncontrado = await obtenerNombrePorCedula(cedula)
+            if (nombreEncontrado) {
+                setNombreCliente(nombreEncontrado)
+                setClienteFrecuente(true) // Activamos el aviso de cliente frecuente
+            } else {
+                setClienteFrecuente(false)
+            }
+        } else {
+            setClienteFrecuente(false)
         }
     }
 
@@ -92,7 +100,6 @@ export default function CatalogoPage() {
     })
 
     const agregarAlCarrito = (producto: Producto) => {
-        // Verificar stock si está definido y es 0
         if (producto.stock !== undefined && producto.stock <= 0) return
 
         setCarrito((prevCarrito) => {
@@ -540,9 +547,19 @@ className = "bg-gray-900 hover:bg-amber-500 hover:text-black text-white rounded-
 {
     carrito.length > 0 && (
         <div className="fixed bottom-0 left-0 right-0 bg-[#121212] border-t border-amber-600/40 p-4 shadow-2xl z-40 max-w-7xl mx-auto flex flex-col gap-3" >
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 bg-black p-3 border border-amber-600/20" >
-                <div className="flex items-center gap-2" >
-                    <label className="text-[11px] font-bold text-amber-400 whitespace-nowrap uppercase tracking-wider" >
+        {/* Aviso de cliente frecuente si ya existe en Supabase */ }
+    {
+        clienteFrecuente && (
+            <div className="bg-amber-500/10 border border-amber-500/40 px-3 py-1.5 text-amber-400 text-xs font-bold uppercase tracking-wider flex items-center justify-between" >
+                <span>✨ ¡Qué bueno verte de nuevo, { nombreCliente }!(Cliente Frecuente) </span>
+                    < span className = "text-[10px] text-gray-400 font-normal" > Datos sincronizados </span>
+                        </div>
+                    )
+    }
+
+    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 bg-black p-3 border border-amber-600/20" >
+        <div className="flex items-center gap-2" >
+            <label className="text-[11px] font-bold text-amber-400 whitespace-nowrap uppercase tracking-wider" >
                                 🆔 Cédula:
     </label>
         < input
