@@ -17,6 +17,7 @@ interface Producto {
     imagen_url: string
     categoria?: string
     especificaciones?: string
+    stock?: number // Opcional: si no existe en la BD, por defecto asumiremos que hay stock
 }
 
 export default function CatalogoPage() {
@@ -26,14 +27,9 @@ export default function CatalogoPage() {
     const [productoSeleccionado, setProductoSeleccionado] = useState<Producto | null>(null)
     const [carrito, setCarrito] = useState<{ producto: Producto; cantidad: number }[]>([])
 
-    // Estado para controlar la visibilidad del modal del carrito
     const [mostrarCarritoModal, setMostrarCarritoModal] = useState<boolean>(false)
-
-    // Estados para cédula y nombre del comprador
     const [cedulaCliente, setCedulaCliente] = useState<string>('')
     const [nombreCliente, setNombreCliente] = useState<string>('')
-
-    // Estado para detectar si estamos en entorno local
     const [esLocalhost, setEsLocalhost] = useState<boolean>(false)
 
     useEffect(() => {
@@ -96,6 +92,9 @@ export default function CatalogoPage() {
     })
 
     const agregarAlCarrito = (producto: Producto) => {
+        // Verificar stock si está definido y es 0
+        if (producto.stock !== undefined && producto.stock <= 0) return
+
         setCarrito((prevCarrito) => {
             const index = prevCarrito.findIndex((item) => item.producto.id === producto.id)
             if (index >= 0) {
@@ -293,11 +292,9 @@ className = "border border-amber-500/50 hover:border-amber-400 text-amber-400 px
         </div>
         </header>
 
-{/* Contenedor principal de productos y filtros */ }
+{/* Catálogo de Productos */ }
 <div id="catalogo" className = "max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-12" >
-
-{/* Buscador y Filtros Estilo Dorado/Oscuro */ }
-    < div className = "bg-[#141414] p-5 rounded-none border border-amber-600/30 mb-10 flex flex-col md:flex-row gap-4 justify-between items-center shadow-2xl" >
+    <div className="bg-[#141414] p-5 rounded-none border border-amber-600/30 mb-10 flex flex-col md:flex-row gap-4 justify-between items-center shadow-2xl" >
         <input
                         type="text"
 placeholder = "🔍 Buscar gorras, camisetas..."
@@ -323,39 +320,47 @@ className = {`px-5 py-2 text-xs font-bold uppercase tracking-wider transition-al
 </div>
     </div>
 
-{/* Grid de Productos */ }
-<div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6" >
-{
-    productosFiltrados.map((producto) => (
-        <div
-                            key= { producto.id }
-                            className = "bg-[#121212] text-white rounded-none border border-amber-600/20 overflow-hidden flex flex-col justify-between relative group transition-transform duration-300 hover:-translate-y-1 shadow-xl"
-        >
-        {
-            producto.precio_anterior && producto.precio_anterior > producto.precio && (
-                <span className="absolute top-3 left-3 bg-red-600 text-white text-[10px] font-bold px-2 py-0.5 uppercase tracking-wider z-10">
-                    Oferta
-                    </span>
-                            )
-}
+    < div className = "grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6" >
+    {
+        productosFiltrados.map((producto) => {
+            const esAgotado = producto.stock !== undefined && producto.stock <= 0
 
-    < div
+            return (
+                <div
+                                key= { producto.id }
+            className = {`bg-[#121212] text-white rounded-none border border-amber-600/20 overflow-hidden flex flex-col justify-between relative group transition-transform duration-300 shadow-xl ${esAgotado ? 'opacity-75' : 'hover:-translate-y-1'
+                }`
+        }
+                            >
+            {
+                esAgotado?(
+                                    <span className = "absolute top-3 left-3 bg-zinc-800 text-gray-300 text-[10px] font-bold px-2 py-0.5 uppercase tracking-wider z-10 border border-gray-700" >
+                        Agotado
+                        </span>
+                ): producto.precio_anterior && producto.precio_anterior > producto.precio ? (
+                    <span className= "absolute top-3 left-3 bg-red-600 text-white text-[10px] font-bold px-2 py-0.5 uppercase tracking-wider z-10" >
+                    Oferta
+            </span>
+                                ) : null}
+
+        < div
 className = "cursor-pointer relative h-64 bg-black overflow-hidden"
 onClick = {() => setProductoSeleccionado(producto)}
-                            >
+                                >
     <img
-                                    src={ producto.imagen_url }
+                                        src={ producto.imagen_url }
 alt = { producto.nombre }
-className = "w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 opacity-90 group-hover:opacity-100"
-    />
+className = {`w-full h-full object-cover transition-transform duration-500 ${esAgotado ? 'grayscale brightness-50' : 'opacity-90 group-hover:opacity-100 group-hover:scale-105'
+    }`}
+                                    />
     </div>
 
     < div className = "p-5 flex flex-col flex-grow justify-between" >
         <div>
         <h3
-                                        className="font-bold text-sm text-amber-400 cursor-pointer hover:text-amber-300 line-clamp-1 transition-colors"
+                                            className="font-bold text-sm text-amber-400 cursor-pointer hover:text-amber-300 line-clamp-1 transition-colors"
 onClick = {() => setProductoSeleccionado(producto)}
-                                    >
+                                        >
 { producto.nombre }
     </h3>
     < p className = "text-gray-400 text-xs mt-1.5 line-clamp-2 font-light" >
@@ -370,25 +375,30 @@ onClick = {() => setProductoSeleccionado(producto)}
                     <span className="text-[11px] text-gray-500 line-through">
                         ${ producto.precio_anterior.toFixed(2) }
 </span>
-                                        )}
+                                            )}
 <span className="text-base font-black text-white" >
     ${ producto.precio.toFixed(2) }
 </span>
     </div>
     < button
 onClick = {() => agregarAlCarrito(producto)}
-className = "w-full bg-amber-500 hover:bg-amber-600 text-black py-2.5 rounded-none text-xs font-extrabold uppercase tracking-wider transition-colors shadow-md flex items-center justify-center gap-1.5"
-    >
-    Agregar al carrito
-        </button>
-        </div>
-        </div>
-        </div>
-                    ))}
+disabled = { esAgotado }
+className = {`w-full py-2.5 rounded-none text-xs font-extrabold uppercase tracking-wider transition-colors shadow-md flex items-center justify-center gap-1.5 ${esAgotado
+        ? 'bg-zinc-800 text-zinc-500 cursor-not-allowed border border-zinc-700'
+        : 'bg-amber-500 hover:bg-amber-600 text-black'
+    }`}
+                                        >
+{ esAgotado? 'Agotado': 'Agregar al carrito' }
+    </button>
+    </div>
+    </div>
+    </div>
+                        )
+                    })}
 </div>
     </div>
 
-{/* Sección de Historia Estilo Imagen */ }
+{/* Sección de Historia */ }
 <section id="historia" className = "max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-24" >
     <div className="bg-[#121212] border border-amber-600/30 p-8 md:p-12 flex flex-col md:flex-row items-center gap-10" >
         <div className="w-full md:w-1/2" >
@@ -429,53 +439,59 @@ className = "w-full h-80 object-cover border border-amber-600/20 grayscale hover
             <img
                                 src={ productoSeleccionado.imagen_url }
     alt = { productoSeleccionado.nombre }
-    className = "w-full h-full object-cover"
-        />
-        </div>
-
-        < div className = "p-6 overflow-y-auto flex-grow" >
-            <h2 className="text-xl font-bold text-amber-400 mb-1 font-serif" >
-            { productoSeleccionado.nombre }
-                </h2>
-                < span className = "text-lg font-bold text-white block mb-4" >
-                    ${ productoSeleccionado.precio.toFixed(2) }
-    </span>
-
-        < div className = "text-gray-300 text-xs mb-6 bg-black p-4 border border-amber-600/20" >
-            <p className="font-bold text-amber-400 mb-2 uppercase tracking-wider" > Detalles del producto: </p>
-    {
-        productoSeleccionado.especificaciones ? (
-            <ul className= "space-y-1.5 list-disc list-inside text-gray-300 font-light" >
-            {
-                productoSeleccionado.especificaciones
-                    .split('\n')
-                    .map((spec: string, index: number) => (
-                        <li key= { index } > { spec.replace(/^[-*]\s*/, '') } </li>
-                    ))
-            }
-            </ul>
-                                ) : (
-            <p className= "text-gray-400 font-light" > { productoSeleccionado.descripcion } </p>
-                                )
-    }
+    className = {`w-full h-full object-cover ${productoSeleccionado.stock !== undefined && productoSeleccionado.stock <= 0 ? 'grayscale brightness-50' : ''}`
+}
+                            />
     </div>
 
-        < button
-    onClick = {() => {
+    < div className = "p-6 overflow-y-auto flex-grow" >
+        <h2 className="text-xl font-bold text-amber-400 mb-1 font-serif" >
+        { productoSeleccionado.nombre }
+            </h2>
+            < span className = "text-lg font-bold text-white block mb-4" >
+                ${ productoSeleccionado.precio.toFixed(2) }
+</span>
+
+    < div className = "text-gray-300 text-xs mb-6 bg-black p-4 border border-amber-600/20" >
+        <p className="font-bold text-amber-400 mb-2 uppercase tracking-wider" > Detalles del producto: </p>
+{
+    productoSeleccionado.especificaciones ? (
+        <ul className= "space-y-1.5 list-disc list-inside text-gray-300 font-light" >
+        {
+            productoSeleccionado.especificaciones
+                .split('\n')
+                .map((spec: string, index: number) => (
+                    <li key= { index } > { spec.replace(/^[-*]\s*/, '') } </li>
+                ))
+        }
+        </ul>
+                                ) : (
+        <p className= "text-gray-400 font-light" > { productoSeleccionado.descripcion } </p>
+                                )
+}
+</div>
+
+    < button
+onClick = {() => {
+    if (productoSeleccionado.stock === undefined || productoSeleccionado.stock > 0) {
         agregarAlCarrito(productoSeleccionado)
         setProductoSeleccionado(null)
     }
-}
-className = "w-full bg-amber-500 hover:bg-amber-600 text-black py-3 font-extrabold uppercase tracking-widest transition-colors text-xs shadow-md"
-    >
-    Agregar al carrito
-        </button>
-        </div>
-        </div>
-        </div>
+}}
+disabled = { productoSeleccionado.stock !== undefined && productoSeleccionado.stock <= 0 }
+className = {`w-full py-3 font-extrabold uppercase tracking-widest transition-colors text-xs shadow-md ${productoSeleccionado.stock !== undefined && productoSeleccionado.stock <= 0
+        ? 'bg-zinc-800 text-zinc-500 cursor-not-allowed border border-zinc-700'
+        : 'bg-amber-500 hover:bg-amber-600 text-black'
+    }`}
+                            >
+{ productoSeleccionado.stock !== undefined && productoSeleccionado.stock <= 0 ? 'Agotado' : 'Agregar al carrito' }
+    </button>
+    </div>
+    </div>
+    </div>
             )}
 
-{/* Modal de Visualización del Carrito */ }
+{/* Modal de Carrito */ }
 {
     mostrarCarritoModal && (
         <div className="fixed inset-0 bg-black/90 backdrop-blur-sm flex items-center justify-center p-4 z-50" >
@@ -520,11 +536,10 @@ className = "bg-gray-900 hover:bg-amber-500 hover:text-black text-white rounded-
                 </div>
             )}
 
-{/* Barra Inferior Flotante con Cédula, Nombre y Acciones */ }
+{/* Barra Inferior Flotante */ }
 {
     carrito.length > 0 && (
-        <div className="fixed bottom-0 left-0 right-0 bg-[#121212] border-t border-amber-600/40 p-4 shadow-2xl z-40 max-w-7xl mx-auto sm:rounded-none flex flex-col gap-3" >
-
+        <div className="fixed bottom-0 left-0 right-0 bg-[#121212] border-t border-amber-600/40 p-4 shadow-2xl z-40 max-w-7xl mx-auto flex flex-col gap-3" >
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 bg-black p-3 border border-amber-600/20" >
                 <div className="flex items-center gap-2" >
                     <label className="text-[11px] font-bold text-amber-400 whitespace-nowrap uppercase tracking-wider" >
