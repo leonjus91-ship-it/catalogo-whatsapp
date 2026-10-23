@@ -219,4 +219,26 @@ export default function AdminPage() {
                                         <td style={{ padding: '6px 0' }}>{item.cantidad}</td>
                                         <td style={{ padding: '6px 0' }}>${item.producto.precio}</td>
                                         <td style={{ padding: '6px 0', textAlign: 'right' }}>${(item.producto.precio * item.cantidad).toFixed(2)}</td>
-                                        <td className="no-print" style={{ padding: '6px 0',
+                                        <td className="no-print" style={{ padding: '6px 0', textAlign: 'right' }}>
+                                            <button onClick={() => handleRemoveItem(item.producto.id)} style={{ background: 'none', border: 'none', color: '#ef4444', cursor: 'pointer', fontWeight: 'bold' }}>✕</button>
+                                        </td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div>
+                        <div style={{ borderTop: '2px solid #0f172a', paddingTop: '10px', textAlign: 'right', fontSize: '1.2rem', fontWeight: 'bold', color: '#0f172a' }}>
+                            TOTAL: ${total.toFixed(2)}
+                        </div>
+                        <button className="no-print" onClick={handlePrint} style={{ width: '100%', marginTop: '15px', padding: '12px', backgroundColor: '#16a34a', color: '#fff', border: 'none', borderRadius: '6px', fontWeight: 'bold', fontSize: '0.95rem', cursor: 'pointer' }}>
+                            🖨️ Imprimir / Guardar PDF
+                        </button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    )
+}
